@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Cormorant Garamond', serif;
+  color: #1a1a1a;
+  background: #f5f0e8;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scroll-snap container */
+.snap-container {
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+/* Scroll-snap container with no manual scrolling */
+.snap-container-no-scroll {
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  height: 100%;
+  overscroll-behavior: none;
+  pointer-events: none; /* Disable pointer events on container */
+}
+
+/* Re-enable pointer events on child sections */
+.snap-container-no-scroll > * {
+  pointer-events: auto;
+}
+
+/* Hide scrollbar but keep functionality */
+.snap-container::-webkit-scrollbar,
+.snap-container-no-scroll::-webkit-scrollbar {
+  display: none;
+}
+.snap-container,
+.snap-container-no-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.snap-section {
+  scroll-snap-align: start;
+  height: 100vh;
+  min-height: 100vh;
+}
