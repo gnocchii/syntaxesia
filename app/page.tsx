@@ -1,143 +1,197 @@
 "use client";
 
 import { useState } from "react";
+import TextType from "./TextType";
+import LightRays from "./LightRays";
 
-export default function Home() {
+export default function SyntaxesiaLobby() {
   const [code, setCode] = useState("");
-  const [language, setLanguage] = useState("JavaScript");
-  const [chaos, setChaos] = useState(5);
-
   const [status, setStatus] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [promptUsed, setPromptUsed] = useState("");
 
   return (
-    <main style={{ padding: 40, fontFamily: "sans-serif", maxWidth: 900 }}>
-      <h1 style={{ marginBottom: 8 }}>Code Psyche Generator</h1>
-      <p style={{ marginTop: 0, opacity: 0.7 }}>
-        Paste code → generate cute-chaotic post-contemporary abstract art.
-      </p>
-
-      <textarea
-        placeholder="Paste your code here..."
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-        rows={12}
+    <main
+      className="sx-grain relative min-h-screen overflow-hidden px-6 py-10 sm:px-10 flex"
+      style={{
+        background:
+          "radial-gradient(circle at 50% 0%, rgba(250,246,238,0.98), rgba(208,190,165,0.98) 52%, rgba(168,145,120,0.98) 100%)",
+      }}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
         style={{
-          width: "100%",
-          marginBottom: 16,
-          padding: 12,
-          borderRadius: 10,
-          border: "1px solid #ddd",
-          fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
-          fontSize: 12,
+          background:
+            "radial-gradient(60% 50% at 50% 25%, rgba(255,255,255,0.45), rgba(255,255,255,0.0) 60%)",
         }}
       />
-
-      <div style={{ display: "flex", gap: 16, alignItems: "center", marginBottom: 16 }}>
-        <div>
-          <label style={{ display: "block", fontSize: 12, opacity: 0.7 }}>Language</label>
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            style={{ padding: 8, borderRadius: 8, border: "1px solid #ddd" }}
-          >
-            <option>JavaScript</option>
-            <option>Python</option>
-            <option>Rust</option>
-            <option>C</option>
-            <option>Java</option>
-            <option>HTML</option>
-            <option>CSS</option>
-          </select>
-        </div>
-
-        <div style={{ flex: 1 }}>
-          <label style={{ display: "block", fontSize: 12, opacity: 0.7 }}>
-            Chaos: {chaos}/10
-          </label>
-          <input
-            type="range"
-            min="0"
-            max="10"
-            value={chaos}
-            onChange={(e) => setChaos(Number(e.target.value))}
-            style={{ width: "100%" }}
-          />
-        </div>
-
-        <button
-          style={{
-            padding: "12px 16px",
-            backgroundColor: "black",
-            color: "white",
-            border: "none",
-            borderRadius: 10,
-            cursor: "pointer",
-            fontWeight: 600,
-          }}
-          onClick={async () => {
-            try {
-              setStatus("Generating image...");
-              setImageUrl("");
-              setPromptUsed("");
-
-              const res = await fetch("/api/generate", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code, language, chaos }),
-              });
-
-              const data = await res.json();
-
-              if (!res.ok) {
-                setStatus(`❌ ${data.error || "Request failed"}`);
-                return;
-              }
-
-              setImageUrl(data.imageDataUrl);
-              setPromptUsed(data.promptUsed);
-              setStatus("✅ Image generated!");
-            } catch (error) {
-              console.error(error);
-              setStatus("❌ Something went wrong. Check console.");
-            }
-          }}
-        >
-          Generate Art
-        </button>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[70vh] max-w-5xl"
+        style={{
+          borderRadius: "200px 200px 80px 80px",
+          boxShadow:
+            "inset 0 0 0 2px rgba(255,255,255,0.35), inset 0 -30px 80px rgba(110,85,60,0.25)",
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.5), rgba(210,190,165,0.5) 45%, rgba(160,135,110,0.55) 100%)",
+          opacity: 0.7,
+          zIndex: 1,
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 left-0 w-[18vw] max-w-[220px]"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.85), rgba(175,150,125,0.9))",
+          boxShadow:
+            "inset -10px 0 25px rgba(0,0,0,0.18), 0 20px 60px rgba(0,0,0,0.18)",
+          borderTopRightRadius: "40px",
+          zIndex: 2,
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 right-0 w-[18vw] max-w-[220px]"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.85), rgba(175,150,125,0.9))",
+          boxShadow:
+            "inset 10px 0 25px rgba(0,0,0,0.18), 0 20px 60px rgba(0,0,0,0.18)",
+          borderTopLeftRadius: "40px",
+          zIndex: 2,
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-52"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(0,0,0,0), rgba(90,70,55,0.25) 60%, rgba(70,55,45,0.38) 100%)",
+        }}
+      />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px]" style={{ zIndex: 3 }}>
+        <LightRays
+          raysOrigin="top-center"
+          raysColor="#ffffff"
+          raysSpeed={1}
+          lightSpread={0.5}
+          rayLength={3}
+          followMouse
+          mouseInfluence={0.1}
+          noiseAmount={0}
+          distortion={0}
+          className="custom-rays"
+          pulsating={false}
+          fadeDistance={1}
+          saturation={1}
+        />
       </div>
+      <div
+        className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center gap-8 text-center"
+        style={{ gap: "1.5rem", minHeight: "100%" }}
+      >
+        <header
+          className="space-y-3"
+          style={{ display: "grid", gap: "0.6rem", marginTop: "5rem" }}
+        >
+          <TextType
+            text={["SYNTAXESIA"]}
+            typingSpeed={90}
+            pauseDuration={1500}
+            showCursor
+            cursorCharacter="_"
+            deletingSpeed={50}
+            loop={false}
+            as="h1"
+            className="font-semibold tracking-[0.34em] text-[rgb(var(--sx-ink))]"
+            style={{ fontSize: "clamp(2.25rem, 7vw, 5rem)" }}
+          />
+          <p className="mx-auto max-w-xl text-sm text-[rgba(28,28,28,0.65)] sm:text-base">
+            Paste your code and we&apos;ll turn it into a gallery of abstract art.
+          </p>
+        </header>
 
-      {status && (
-        <p style={{ marginTop: 0, marginBottom: 16 }}>
-          {status}
-        </p>
-      )}
-
-      {imageUrl && (
-        <div style={{ marginTop: 12 }}>
-          <img
-            src={imageUrl}
-            alt="Generated art"
+        <section
+          className="w-full space-y-3"
+          style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
+        >
+          <label
+            htmlFor="code-input"
+            className="text-xs uppercase tracking-[0.3em] text-[rgba(28,28,28,0.6)]"
+          >
+            Your Code
+          </label>
+          <textarea
+            id="code-input"
+            placeholder="Paste code here..."
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            className="mx-auto h-[32vh] w-full max-w-[750px] rounded-3xl border border-[rgba(28,28,28,0.2)] bg-white/90 p-5 text-sm text-[rgb(var(--sx-ink))] shadow-[0_16px_40px_rgba(28,28,28,0.08)] outline-none transition focus:border-[rgba(28,28,28,0.5)]"
             style={{
-              width: "100%",
-              maxWidth: 512,
-              height: "auto",
-              borderRadius: 16,
-              border: "1px solid #eee",
+              borderRadius: "28px",
+              padding: "1.25rem",
+              maxHeight: "420px",
+              minHeight: "180px",
             }}
           />
-        </div>
-      )}
+          <button
+            className="mx-auto inline-flex items-center justify-center rounded-full bg-[rgb(var(--sx-ink))] px-6 py-3 text-sm font-medium text-[rgb(var(--sx-bg))] transition hover:-translate-y-0.5 hover:shadow-[0_18px_45px_rgba(28,28,28,0.25)]"
+            onClick={async () => {
+              if (!code.trim()) {
+                setStatus("Paste some code first.");
+                return;
+              }
+              try {
+                setStatus("Generating image...");
+                setImageUrl("");
+                setPromptUsed("");
 
-      {promptUsed && (
-        <details style={{ marginTop: 16 }}>
-          <summary style={{ cursor: "pointer" }}>Prompt used</summary>
-          <pre style={{ whiteSpace: "pre-wrap", fontSize: 12, opacity: 0.85 }}>
-            {promptUsed}
-          </pre>
-        </details>
-      )}
+                const res = await fetch("/api/generate", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ code, language: "JavaScript", chaos: 5 }),
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                  setStatus(`❌ ${data.error || "Request failed"}`);
+                  return;
+                }
+
+                setImageUrl(data.imageDataUrl);
+                setPromptUsed(data.promptUsed);
+                setStatus("✅ Image generated!");
+              } catch (error) {
+                console.error(error);
+                setStatus("❌ Something went wrong. Check console.");
+              }
+            }}
+          >
+            Generate Art
+          </button>
+          {status && (
+            <p className="text-center text-xs text-[rgba(28,28,28,0.65)]">
+              {status}
+            </p>
+          )}
+          {imageUrl && (
+            <img
+              src={imageUrl}
+              alt="Generated art"
+              className="mx-auto mt-2 w-full max-w-[520px] rounded-3xl border border-[rgba(28,28,28,0.15)]"
+            />
+          )}
+          {promptUsed && (
+            <details className="mx-auto w-full max-w-[520px] text-left text-xs text-[rgba(28,28,28,0.7)]">
+              <summary className="cursor-pointer">Prompt used</summary>
+              <pre className="whitespace-pre-wrap">{promptUsed}</pre>
+            </details>
+          )}
+        </section>
+      </div>
     </main>
   );
 }
