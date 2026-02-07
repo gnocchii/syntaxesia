@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { artworks } from '@/lib/mockData'
@@ -8,6 +9,33 @@ export default function ArtworkDetail() {
   const [searchParams] = useSearchParams()
   const fromFloor = searchParams.get('from') || 'floor-0'
   const artwork = artworks.find((a) => a.id === Number(id))
+  const audioRef = useRef(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [voiceId, setVoiceId] = useState('Xb7hH8MSUJpSbSDYk0k2')
+
+  const voiceOptions = [
+    {
+      id: 'Xb7hH8MSUJpSbSDYk0k2',
+      name: 'Alice',
+      description: 'British, calm museum docent',
+    },
+    {
+      id: '9BWtsMINqrJLrRacOk9x',
+      name: 'Aria',
+      description: 'Neutral, clear narration',
+    },
+    {
+      id: 'CwhRBWXzGAHq8TQ4Fs17',
+      name: 'Roger',
+      description: 'British, mature and warm',
+    },
+    {
+      id: 'FGY2WhTYpPnrIDTdsKH5',
+      name: 'Laura',
+      description: 'British, soft and refined',
+    },
+  ]
 
   if (!artwork) {
     return (
@@ -18,6 +46,52 @@ export default function ArtworkDetail() {
   }
 
   const { placard } = artwork
+  const ttsText = useMemo(() => {
+    const segments = []
+    if (placard.filename) {
+      segments.push(placard.filename)
+    }
+    if (placard.title) {
+      segments.push(placard.title)
+    }
+    if (placard.description) {
+      segments.push(placard.description)
+    }
+    return segments.join('. ')
+  }, [placard])
+
+  const stopAudio = useCallback(() => {
+    if (!audioRef.current) return
+    audioRef.current.pause()
+    audioRef.current.currentTime = 0
+    audioRef.current.src = ''
+    audioRef.current.load()
+    audioRef.current = null
+    setIsPlaying(false)
+  }, [])
+
+  const handleAudioToggle = useCallback(() => {
+    if (!ttsText) return
+    if (isPlaying) {
+      stopAudio()
+      return
+    }
+    stopAudio()
+    const params = new URLSearchParams({ text: ttsText })
+    if (voiceId) {
+      params.set('voice_id', voiceId)
+    }
+    const audio = new Audio(`/api/tts?${params.toString()}`)
+    audioRef.current = audio
+    audio.onended = () => setIsPlaying(false)
+    audio.onerror = () => setIsPlaying(false)
+    setIsPlaying(true)
+    audio.play().catch(() => setIsPlaying(false))
+  }, [isPlaying, stopAudio, ttsText, voiceId])
+
+  useEffect(() => {
+    return () => stopAudio()
+  }, [stopAudio])
 
   return (
     <div className="w-full h-full bg-white flex">
@@ -76,6 +150,77 @@ export default function ArtworkDetail() {
 
         {/* Divider */}
         <div className="w-8 h-px bg-[#1a1a1a]/15 mb-8" />
+
+        {/* Audio guide */}
+        {ttsText && (
+          <div className="flex items-center gap-3 mb-6">
+            <button
+              type="button"
+              onClick={handleAudioToggle}
+              className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-[#1a1a1a]/20 text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:border-[#1a1a1a]/40 transition-colors"
+              aria-label={isPlaying ? 'Stop audio guide' : 'Play audio guide'}
+            >
+              {isPlaying ? (
+                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor" aria-hidden="true">
+                  <rect x="6" y="6" width="4" height="12" rx="1" />
+                  <rect x="14" y="6" width="4" height="12" rx="1" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor" aria-hidden="true">
+                  <path d="M4 10v4c0 1.1.9 2 2 2h3l5 4V4L9 8H6c-1.1 0-2 .9-2 2Z" />
+                  <path d="M16.5 8.5a1 1 0 0 1 1.4 0 6 6 0 0 1 0 7.1 1 1 0 1 1-1.4-1.4 4 4 0 0 0 0-4.3 1 1 0 0 1 0-1.4Z" />
+                </svg>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsSettingsOpen((prev) => !prev)}
+              className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a]/15 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-[#1a1a1a]/55 hover:text-[#1a1a1a] hover:border-[#1a1a1a]/35 transition-colors"
+              aria-label={isSettingsOpen ? 'Close voice settings' : 'Open voice settings'}
+            >
+              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" aria-hidden="true">
+                <path d="M12 3a3 3 0 0 0-3 3v4a3 3 0 1 0 6 0V6a3 3 0 0 0-3-3Zm-5 7a1 1 0 1 0-2 0 7 7 0 0 0 6 6.92V19H8a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2h-3v-2.08A7 7 0 0 0 19 10a1 1 0 1 0-2 0 5 5 0 1 1-10 0Z" />
+              </svg>
+              Voice settings
+            </button>
+            <span className="text-xs uppercase tracking-[0.2em] text-[#1a1a1a]/40">
+              Audio guide
+            </span>
+          </div>
+        )}
+
+        {isSettingsOpen && (
+          <div className="mb-6 rounded-lg border border-[#1a1a1a]/10 bg-[#faf9f6] px-4 py-3 text-xs text-[#1a1a1a]/70">
+            <label className="block text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a]/40 mb-2">
+              Voice
+            </label>
+            <div className="space-y-2">
+              {voiceOptions.map((voice) => (
+                <label
+                  key={voice.id}
+                  className="flex items-start gap-2 rounded-md border border-[#1a1a1a]/10 bg-white px-3 py-2 cursor-pointer hover:border-[#1a1a1a]/25"
+                >
+                  <input
+                    type="radio"
+                    name="voice"
+                    value={voice.id}
+                    checked={voiceId === voice.id}
+                    onChange={() => setVoiceId(voice.id)}
+                    className="mt-1 accent-[#1a1a1a]"
+                  />
+                  <span>
+                    <span className="block text-xs text-[#1a1a1a]/80">
+                      {voice.name}
+                    </span>
+                    <span className="block text-[10px] text-[#1a1a1a]/40">
+                      {voice.description}
+                    </span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Description */}
         {placard.description && (

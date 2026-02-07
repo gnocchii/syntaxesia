@@ -6,6 +6,7 @@ export const artworks = [
     image: '/frame.png',
     placard: {
       title: 'The Lecture Hall',
+      filename: 'lecture_hall.js',
       artist: 'Unknown Folk Artist',
       medium: 'Carved & painted wood diorama',
       year: '1932',
@@ -22,6 +23,7 @@ export const artworks = [
     image: '/frame.png',
     placard: {
       title: 'Assembly of Gazes',
+      filename: 'assembly_of_gazes.py',
       artist: 'Unknown Folk Artist',
       medium: 'Carved & painted wood diorama',
       year: '1934',
@@ -37,6 +39,7 @@ export const artworks = [
     image: '/frame.png',
     placard: {
       title: 'The Weight of Attention',
+      filename: 'weight_of_attention.tsx',
       artist: 'Unknown Folk Artist',
       medium: 'Carved & painted wood diorama',
       year: '1935',
@@ -52,6 +55,7 @@ export const artworks = [
     image: '/frame.png',
     placard: {
       title: 'Furniture as Architecture',
+      filename: 'furniture_architecture.rb',
       artist: 'Unknown Folk Artist',
       medium: 'Carved & painted wood diorama',
       year: '1933',
@@ -67,6 +71,7 @@ export const artworks = [
     image: '/frame.png',
     placard: {
       title: 'Study in Ochre',
+      filename: 'study_in_ochre.go',
       artist: 'Unknown Folk Artist',
       medium: 'Carved & painted wood diorama',
       year: '1936',
@@ -82,6 +87,7 @@ export const artworks = [
     image: '/frame.png',
     placard: {
       title: 'The Democratic Stage',
+      filename: 'democratic_stage.java',
       artist: 'Unknown Folk Artist',
       medium: 'Carved & painted wood diorama',
       year: '1937',

@@ -59,12 +59,23 @@ Inspired by Animal Crossing — smooth, gentle, slightly bouncy transitions. Cle
 npm install
 ```
 
+### Configure ElevenLabs
+Create a `.env` file (see `.env.example`) and set:
+- `ELEVENLABS_API_KEY`
+- `ELEVENLABS_VOICE_ID` (defaults to British English preset Alice)
+- `ELEVENLABS_MODEL_ID` (optional; defaults to `eleven_multilingual_v2`)
+
 ### Run development server
 ```bash
 npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### Run the API server (FastAPI)
+```bash
+uvicorn api.main:app --reload
+```
 
 ### Build for production
 ```bash
