@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# secrets / credentials
+syntaxesia-vertex-key.json
+*-key.json
+
+# build output
+/dist

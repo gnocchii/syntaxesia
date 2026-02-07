@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@google-cloud/vertexai": "^1.10.0",
+    "@google/generative-ai": "^0.24.1",
     "gsap": "^3.14.2",
     "next": "16.1.6",
     "ogl": "^1.0.11",
