@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import TextType from "./TextType";
-import LightRays from "./LightRays";
 
 export default function SyntaxesiaLobby() {
   const [code, setCode] = useState("");
@@ -71,23 +70,6 @@ export default function SyntaxesiaLobby() {
             "linear-gradient(180deg, rgba(0,0,0,0), rgba(90,70,55,0.25) 60%, rgba(70,55,45,0.38) 100%)",
         }}
       />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px]" style={{ zIndex: 3 }}>
-        <LightRays
-          raysOrigin="top-center"
-          raysColor="#ffffff"
-          raysSpeed={1}
-          lightSpread={0.5}
-          rayLength={3}
-          followMouse
-          mouseInfluence={0.1}
-          noiseAmount={0}
-          distortion={0}
-          className="custom-rays"
-          pulsating={false}
-          fadeDistance={1}
-          saturation={1}
-        />
-      </div>
       <div
         className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center gap-8 text-center"
         style={{ gap: "1.5rem", minHeight: "100%" }}
