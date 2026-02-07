@@ -48,11 +48,29 @@ export default function ArtworkDetail() {
   const { placard } = artwork
   const ttsText = useMemo(() => {
     const segments = []
-    if (placard.filename) {
-      segments.push(placard.filename)
+    const filename = placard.filename?.trim()
+    const title = placard.title?.trim()
+    const normalize = (value) =>
+      value
+        .toLowerCase()
+        .replace(/\.[a-z0-9]+$/i, '')
+        .replace(/[\s_-]+/g, ' ')
+        .trim()
+
+    if (filename) {
+      const withoutExtension = filename.replace(/\.[a-z0-9]+$/i, '').trim()
+      segments.push(withoutExtension || filename)
     }
-    if (placard.title) {
-      segments.push(placard.title)
+    if (title) {
+      const normalizedTitle = normalize(title)
+      const normalizedFilename = filename ? normalize(filename) : ''
+      const isDuplicate =
+        normalizedFilename &&
+        (normalizedTitle === normalizedFilename ||
+          normalizedTitle.includes(normalizedFilename))
+      if (!isDuplicate) {
+        segments.push(title)
+      }
     }
     if (placard.description) {
       segments.push(placard.description)
