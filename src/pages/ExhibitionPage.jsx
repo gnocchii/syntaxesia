@@ -4,7 +4,6 @@ import { motion } from 'framer-motion'
 import { useGeneratedArt } from '@/lib/ArtContext'
 import FloorIndicator from '@/components/FloorIndicator'
 import TipModal from '@/components/TipModal'
-import StarBorder from '@/components/StarBorder'
 import Floor2Content from '@/components/Floor2Content'
 
 const FLOOR_IDS = ['floor-2', 'floor-1', 'floor-0']
@@ -130,10 +129,10 @@ function Floor1Content({ navigate, currentFloor, artworks, generatedImages }) {
 // Ground Floor with background image and wall-mounted frames (artworks 7-10)
 function GroundFloorContent({ navigate, currentFloor, artworks, generatedImages }) {
   const framePositions = [
-    { top: '12%', right: '35%', width: 220, rotation: -1 },
-    { top: '50%', right: '35%', width: 225, rotation: 0.5 },
-    { top: '12%', right: '12%', width: 218, rotation: 1 },
-    { top: '50%', right: '12%', width: 223, rotation: -0.5 },
+    { top: '12%', right: '35%', width: 150, rotation: -1 },
+    { top: '38%', right: '35%', width: 153, rotation: 0.5 },
+    { top: '12%', right: '12%', width: 148, rotation: 1 },
+    { top: '38%', right: '12%', width: 152, rotation: -0.5 },
   ]
 
   if (!artworks || artworks.length === 0) {
@@ -331,16 +330,14 @@ export default function ExhibitionPage() {
       {/* Tip jar button */}
       <button
         onClick={() => setTipOpen(true)}
-        className="fixed bottom-8 right-8 z-50 w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
+        className="fixed top-8 left-28 z-50 hover:opacity-80 transition-opacity duration-300"
       >
-        <StarBorder>
-          <img
-            src="/clearjar.png"
-            alt="Tip Jar"
-            className="w-10 h-10 object-contain"
-            draggable={false}
-          />
-        </StarBorder>
+        <img
+          src="/tipJar.png"
+          alt="Tip Jar"
+          className="w-16 h-16 object-contain drop-shadow-lg"
+          draggable={false}
+        />
       </button>
 
       {/* Tip Modal */}
