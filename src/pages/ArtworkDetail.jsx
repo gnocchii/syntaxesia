@@ -93,15 +93,25 @@ export default function ArtworkDetail() {
   const handleAudioToggle = useCallback(() => {
     if (!ttsText) return
     if (isPlaying) {
-      stopAudio()
+      audioRef.current?.pause()
+      setIsPlaying(false)
       return
     }
-    stopAudio()
     const params = new URLSearchParams({ text: ttsText })
     if (voiceId) {
       params.set('voice_id', voiceId)
     }
-    const audio = new Audio(`/api/tts?${params.toString()}`)
+    const audioUrl = `/api/tts?${params.toString()}`
+    const absoluteUrl = new URL(audioUrl, window.location.href).href
+
+    if (audioRef.current && audioRef.current.src === absoluteUrl) {
+      setIsPlaying(true)
+      audioRef.current.play().catch(() => setIsPlaying(false))
+      return
+    }
+
+    stopAudio()
+    const audio = new Audio(audioUrl)
     audioRef.current = audio
     audio.onended = () => setIsPlaying(false)
     audio.onerror = () => setIsPlaying(false)
