@@ -361,41 +361,36 @@ def get_element_color_palette(m: dict) -> str:
         ]
     shuffled = WILD_ACCENTS[:]
     random.shuffle(shuffled)
-    num_accents = 2 if len(active) > 5 else 1
+    num_accents = min(5, len(shuffled))  # More wild accents = more auction value
     active.sort(key=lambda c: c["weight"], reverse=True)
-    primary = ", ".join(f'{c["name"]} ({c["hex"]}) — DOMINANT' for c in active[:3])
-    secondary = ", ".join(f'{c["name"]} ({c["hex"]})' for c in active[3:])
+    primary = ", ".join(f'{c["name"]} — DOMINANT' for c in active[:3])
+    secondary = ", ".join(f'{c["name"]}' for c in active[3:])
     accents = ", ".join(shuffled[:num_accents])
-    return f"""PRIMARY: {primary}.
-{f'SECONDARY: {secondary}.' if secondary else ''}
-WILD ACCENT{'S' if num_accents > 1 else ''}: {accents}.
-Use colors at FULL SATURATION. Distribute across the entire piece — no single color should dominate more than 40% of the surface.
-Colors should clash, vibrate, and create optical tension."""
+    return f"""PRIMARY COLORS: {primary}.
+SECONDARY LAYERS: {secondary if secondary else 'Additional complexity in every zone'}.
+DAY-GLO EXPLOSIONS: {accents}.
+COLOR INSTRUCTIONS: MAXIMUM saturation. Semantic collision - incompatible colors vibrating against each other.
+Day-glo meets earthworks. Neon pink vs rusted steel. Hyperreal intensity.
+Takashi Murakami Superflat × Jeff Koons kitsch × Jenny Holzer LED aggression."""
 
 
 def get_density_directive(loc: int) -> str:
-    if loc > 500:
-        return "MAXIMUM SATURATION: Zero visible background. Every pixel is covered."
-    if loc > 200:
-        return "HIGH DENSITY: 80-90% of the canvas is covered. Marks crowd each other."
-    if loc > 100:
-        return "MODERATE DENSITY: 50-60% coverage. Clear rhythm between active zones and breathing room."
-    if loc > 50:
-        return "SPARSE: Only 20-30% of the canvas has marks. Empty space IS the composition."
-    return "ULTRA-MINIMAL: 5-10% coverage. Almost nothing on the canvas but deeply powerful."
+    if loc > 300:
+        return "HORROR VACUI: 110% coverage. Fear of empty space. Obsessive maximalism. Sensory overload."
+    if loc > 150:
+        return "MAXIMALIST BRICOLAGE: 90% coverage. Chaotic collision of incompatible elements. Visual cacophony."
+    if loc > 60:
+        return "HIGH DENSITY PLURALISM: 80% coverage. Multi-layered Superflat where foreground/background merge."
+    return "COMPLEX INTERMEDIA: 70% coverage with intense detail. Camp irony - looks expensive and laborious."
 
 
 def get_extremity_directive(m: dict) -> str:
-    chaos = m["cyclomatic_complexity"] + m["max_nesting_depth"] * 3 + m["loop_count"]
-    if chaos > 40:
-        return "VISUAL EXTREMITY: MAXIMUM. Visually VIOLENT. Marks collide and destroy each other."
+    chaos = m["cyclomatic_complexity"] + m["max_nesting_depth"] * 2 + m["loop_count"]
     if chaos > 25:
-        return "VISUAL EXTREMITY: HIGH. Strong contrasts, bold marks, visible tension."
-    if chaos > 12:
-        return "VISUAL EXTREMITY: MODERATE. Confident mark-making with controlled energy."
-    if chaos > 5:
-        return "VISUAL EXTREMITY: LOW. Quiet, measured, contemplative."
-    return "VISUAL EXTREMITY: NEAR ZERO. Almost silent. The faintest possible marks."
+        return "POST-INTERNET CHAOS: Hyperreality breaking into pure data noise. Maximum visual aggression."
+    if chaos > 15:
+        return "NEO-EXPRESSIONIST BRICOLAGE: Raw, aggressive, unpolished. Evidence of obsessive labor."
+    return "CONCEPTUALIST IRONY meets KITSCH: Seemingly controlled but unsettlingly ornate. Camp aesthetic."
 
 
 def get_art_medium(m: dict) -> str:
@@ -417,16 +412,16 @@ def get_art_medium(m: dict) -> str:
 def get_texture_overlays(m: dict) -> str:
     overlays = []
     if m["cyclomatic_complexity"] > 15:
-        overlays.append("Visible crack lines and stress fractures across the surface.")
+        overlays.append("PAINTED crack patterns and stress fractures across the canvas.")
     if m["max_nesting_depth"] > 5:
-        overlays.append("Compressed, folded, or crushed material showing pressure of deep nesting.")
+        overlays.append("PAINTED illusion of compressed layers through color and texture.")
     if m["try_catch_count"] > 3:
-        overlays.append("Gold metallic repair lines — kintsugi philosophy.")
+        overlays.append("PAINTED gold metallic lines (kintsugi-inspired painted marks).")
     if m["duplicate_blocks"] > 2:
-        overlays.append(f"{m['duplicate_blocks']} near-identical regions — uncanny repetition.")
+        overlays.append(f"{m['duplicate_blocks']} PAINTED near-identical regions — uncanny repetition.")
     if m["magic_numbers"] > 5:
-        overlays.append("Small random shapes that don't belong to any system.")
-    return "\n".join(overlays) if overlays else "Surface is clean and assured. No distress."
+        overlays.append("PAINTED random abstract shapes scattered across surface.")
+    return "\n".join(overlays) if overlays else "Dense painted marks covering the entire canvas."
 
 
 def generate_gallery_prompt(m: dict) -> str:
@@ -450,47 +445,51 @@ FRAMING: Edge to edge coverage only."""
 
 
 def generate_dalle_prompt(m: dict) -> str:
-    # Dominant art movement
-    if m["recursion_count"] > 3:
-        movement = "FRACTAL SELF-SIMILARITY: Self-similar nested structures at multiple scales. Artist refs: M.C. Escher, Bridget Riley."
-    elif m["loop_count"] > 8:
-        movement = "OP-ART REPETITION: Obsessive repetitive tiling with optical vibration. Artist refs: Bridget Riley, Yayoi Kusama."
-    elif m["conditional_count"] > 10:
-        movement = "BRANCHING PATHWAYS: Forking paths, tree-like structures. Artist refs: Julie Mehretu, Piet Mondrian tree studies."
-    elif m["class_count"] > 3:
-        movement = "CUBIST FRAGMENTATION: Multiple simultaneous viewpoints fragmented and reassembled. Artist refs: Picasso, Braque."
-    elif m["async_count"] > 5:
-        movement = "SCATTERED CONSTELLATION: Disconnected elements floating with invisible connections. Artist refs: Kandinsky, Miro."
-    elif m["cyclomatic_complexity"] < 5 and m["functions"] < 5:
-        movement = "HARD-EDGE MINIMALISM: Large flat color planes with precise edges. Artist refs: Ellsworth Kelly, Agnes Martin."
+    # ANTI-MINIMALIST movement selection - lower thresholds for complexity
+    if m["recursion_count"] > 1:
+        movement = "CYBERNETIC RECURSION × SPIRAL JETTY EARTHWORKS: Fractal self-similarity with Land Art entropy (Escher × Smithson)"
+    elif m["loop_count"] > 4:
+        movement = "TELEMATIC NET.ART × OP-ART SUPERFLAT: Obsessive tiling meets Murakami flatness (Kusama × Takashi)"
+    elif m["conditional_count"] > 5:
+        movement = "RHIZOMATIC NETWORKS × NEO-EXPRESSIONIST BRICOLAGE: Branching paths with raw aggression (Mehretu × Basquiat)"
+    elif m["class_count"] > 1:
+        movement = "INDUSTRIAL FORMALISM × GOTHIC-BAROQUE-POP: Bauhaus grids meet ornate excess (Mondrian × Jeff Koons)"
+    elif m["async_count"] > 2:
+        movement = "GLITCH ART × HYPERREALITY: Broken data meets hyper-detailed simulation (Rosa Menkman × Gerhard Richter)"
     else:
-        movement = "POST-MODERN COLLAGE: Multiple art styles colliding. Artist refs: Rauschenberg, Jasper Johns."
+        movement = "POST-STRUCTURALIST PASTICHE × INSTITUTIONAL CRITIQUE: Multi-layered semantic collision (Rauschenberg × Jenny Holzer)"
 
-    chaos = m["cyclomatic_complexity"] + m["max_nesting_depth"] * 3 + m["loop_count"]
-    if chaos > 25:
-        marks = "Aggressive: slashing strokes, violent scratches, splattered ink, torn edges"
-    elif chaos > 12:
-        marks = "Confident: deliberate strokes, varied pressure, energetic but controlled"
+    chaos = m["cyclomatic_complexity"] + m["max_nesting_depth"] * 2 + m["loop_count"]
+    if chaos > 15:
+        marks = "VIOLENT MAXIMALISM: Explosive brushwork, splattered day-glo paint, aggressive gestural painting"
+    elif chaos > 8:
+        marks = "NEO-EXPRESSIONIST ENERGY: Bold painted strokes, dripping paint, thick impasto, raw canvas"
     else:
-        marks = "Delicate: hairline marks, whispered touches, barely-there traces"
+        marks = "CAMP IRONY: Over-painted decoration, obsessive painted patterns, maximalist surface"
 
-    return f"""Full-bleed abstract artwork filling the entire square image edge to edge. No borders, no frames.
-
-DOMINANT MOVEMENT: {movement}
-
-COLOR PALETTE:
-{get_element_color_palette(m)}
+    return f"""A museum-quality 2D PAINTING on canvas worth MILLIONS at auction. 8K hyper-detailed.
+Style: {movement}
 
 {get_density_directive(m["lines_of_code"])}
-{get_extremity_directive(m)}
+COMPOSITION: Flatbed picture plane (no horizon, no depth). Pure FLAT painted surface.
 
-TEXTURE: {get_texture_overlays(m)}
+PAINTED COLOR PALETTE:
+{get_element_color_palette(m)}
+
+PAINTING TECHNIQUE & SURFACE:
+{get_texture_overlays(m)}
+MEDIUM: Acrylic paint, oil paint, spray paint, ink on canvas. Purely 2D painted surface.
+Visible painted texture - thick impasto, thin washes, drips, splatters, brushstrokes.
 
 MARK-MAKING: {marks}
 
-SURFACE: Matte paper grain, scan noise. No glossy render. No 3D shading.
-CRITICAL: NO text, letters, numbers, symbols. NO faces or figures. Strictly abstract.
-The artwork fills 100% of the image. No borders. No margins. Edge to edge."""
+SURFACE: Painted marks only - NO objects. Colors suggest depth through layering and texture.
+Thick paint application, matte/glossy contrasts, visible brushwork evidence.
+Gothic-Baroque-Pop fusion - ornate painted patterns meets flat color fields.
+This took months of painting. Museum-quality 2D craftsmanship.
+
+CRITICAL: 100% ABSTRACT 2D PAINTING on canvas. NO objects, text, numbers, faces, depth.
+Pure painted abstract marks. Flat surface covered edge-to-edge with dense painted detail."""
 
 
 def _get_vertex_access_token() -> str:

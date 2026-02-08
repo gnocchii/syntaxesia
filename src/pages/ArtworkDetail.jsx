@@ -18,22 +18,17 @@ export default function ArtworkDetail() {
   const voiceOptions = [
     {
       id: 'Xb7hH8MSUJpSbSDYk0k2',
-      name: 'Alice',
+      name: 'Florence',
       description: 'British, calm museum docent',
     },
     {
       id: '9BWtsMINqrJLrRacOk9x',
-      name: 'Aria',
+      name: 'Juno',
       description: 'Neutral, clear narration',
     },
     {
-      id: 'CwhRBWXzGAHq8TQ4Fs17',
-      name: 'Roger',
-      description: 'British, mature and warm',
-    },
-    {
       id: 'FGY2WhTYpPnrIDTdsKH5',
-      name: 'Laura',
+      name: 'Saoirse',
       description: 'British, soft and refined',
     },
   ]
@@ -114,9 +109,9 @@ export default function ArtworkDetail() {
 
   return (
     <div className="w-full h-full bg-white flex">
-      {/* Left — Artwork image */}
+      {/* Left — Artwork image (full 50% width, no padding) */}
       <motion.div
-        className="flex-1 flex items-center justify-center p-12"
+        className="w-1/2 h-full flex items-center justify-center bg-[#f5f5f5]"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -125,23 +120,21 @@ export default function ArtworkDetail() {
           <img
             src={generatedImages[artwork.id]}
             alt={placard.title}
-            className="max-h-[80vh] max-w-full object-contain drop-shadow-[0_8px_30px_rgba(0,0,0,0.15)]"
+            className="w-full h-full object-contain"
             draggable={false}
           />
         ) : (
-          <div className="flex items-center justify-center w-96 h-96">
-            <motion.div
-              className="w-8 h-8 rounded-full bg-[#1a1a1a]/30"
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            />
-          </div>
+          <motion.div
+            className="w-8 h-8 rounded-full bg-[#1a1a1a]/30"
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          />
         )}
       </motion.div>
 
-      {/* Right — Placard */}
+      {/* Right — Placard (centered, no border) */}
       <motion.div
-        className="w-[380px] shrink-0 border-l border-gray-100 flex flex-col justify-center px-10 py-12"
+        className="w-1/2 h-full flex flex-col justify-center px-16"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.15, ease: 'easeOut' }}
@@ -149,8 +142,8 @@ export default function ArtworkDetail() {
         {/* Back button */}
         <button
           onClick={() => navigate('/exhibition', { state: { scrollToFloor: fromFloor } })}
-          className="text-sm text-gray-400 hover:text-gray-600 transition-colors mb-10 self-start"
-          style={{ fontFamily: 'Inter, sans-serif' }}
+          className="text-sm text-[#1a1a1a]/50 hover:text-[#1a1a1a]/80 transition-colors uppercase tracking-wide mb-8 self-start"
+          style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300 }}
         >
           ← Back
         </button>
@@ -164,22 +157,17 @@ export default function ArtworkDetail() {
 
         {/* Artist */}
         {placard.artist && (
-          <p className="text-sm text-[#1a1a1a]/50 mb-1">{placard.artist}</p>
+          <p className="text-base text-[#1a1a1a]/65 mb-1">{placard.artist}</p>
         )}
 
         {/* Medium */}
         {placard.medium && (
-          <p className="text-sm text-[#1a1a1a]/40 mb-1">{placard.medium}</p>
-        )}
-
-        {/* Year */}
-        {placard.year && (
-          <p className="text-sm text-[#1a1a1a]/40 mb-1">{placard.year}</p>
+          <p className="text-base text-[#1a1a1a]/60 mb-1">{placard.medium}</p>
         )}
 
         {/* Repository Name */}
         {placard.repoName && (
-          <p className="text-sm text-[#1a1a1a]/40 mb-8">{placard.repoName}</p>
+          <p className="text-base text-[#1a1a1a]/60 mb-8">{placard.repoName}</p>
         )}
 
         {/* Divider */}
@@ -209,30 +197,27 @@ export default function ArtworkDetail() {
             <button
               type="button"
               onClick={() => setIsSettingsOpen((prev) => !prev)}
-              className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a]/15 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-[#1a1a1a]/55 hover:text-[#1a1a1a] hover:border-[#1a1a1a]/35 transition-colors"
+              className="inline-flex items-center gap-2 rounded-full border border-[#1a1a1a]/30 px-4 py-2 text-sm uppercase tracking-[0.15em] text-[#1a1a1a]/70 hover:text-[#1a1a1a] hover:border-[#1a1a1a]/50 transition-colors"
               aria-label={isSettingsOpen ? 'Close voice settings' : 'Open voice settings'}
             >
-              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" aria-hidden="true">
+              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor" aria-hidden="true">
                 <path d="M12 3a3 3 0 0 0-3 3v4a3 3 0 1 0 6 0V6a3 3 0 0 0-3-3Zm-5 7a1 1 0 1 0-2 0 7 7 0 0 0 6 6.92V19H8a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2h-3v-2.08A7 7 0 0 0 19 10a1 1 0 1 0-2 0 5 5 0 1 1-10 0Z" />
               </svg>
               Voice settings
             </button>
-            <span className="text-xs uppercase tracking-[0.2em] text-[#1a1a1a]/40">
-              Audio guide
-            </span>
           </div>
         )}
 
         {isSettingsOpen && (
-          <div className="mb-6 rounded-lg border border-[#1a1a1a]/10 bg-[#faf9f6] px-4 py-3 text-xs text-[#1a1a1a]/70">
-            <label className="block text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a]/40 mb-2">
+          <div className="mb-6 rounded-lg border border-[#1a1a1a]/20 bg-[#faf9f6] px-5 py-4">
+            <label className="block text-xs uppercase tracking-[0.2em] text-[#1a1a1a]/60 mb-3 font-medium">
               Voice
             </label>
             <div className="space-y-2">
               {voiceOptions.map((voice) => (
                 <label
                   key={voice.id}
-                  className="flex items-start gap-2 rounded-md border border-[#1a1a1a]/10 bg-white px-3 py-2 cursor-pointer hover:border-[#1a1a1a]/25"
+                  className="flex items-start gap-3 rounded-md border border-[#1a1a1a]/15 bg-white px-4 py-3 cursor-pointer hover:border-[#1a1a1a]/35 transition-colors"
                 >
                   <input
                     type="radio"
@@ -240,13 +225,13 @@ export default function ArtworkDetail() {
                     value={voice.id}
                     checked={voiceId === voice.id}
                     onChange={() => setVoiceId(voice.id)}
-                    className="mt-1 accent-[#1a1a1a]"
+                    className="mt-0.5 accent-[#1a1a1a]"
                   />
                   <span>
-                    <span className="block text-xs text-[#1a1a1a]/80">
+                    <span className="block text-sm text-[#1a1a1a]/85 font-medium">
                       {voice.name}
                     </span>
-                    <span className="block text-[10px] text-[#1a1a1a]/40">
+                    <span className="block text-xs text-[#1a1a1a]/55 mt-0.5">
                       {voice.description}
                     </span>
                   </span>
@@ -258,7 +243,7 @@ export default function ArtworkDetail() {
 
         {/* Description */}
         {placard.description && (
-          <p className="text-base leading-relaxed text-[#1a1a1a]/60 font-serif mb-8">
+          <p className="text-xl leading-relaxed text-[#1a1a1a]/85 font-serif mb-8">
             {placard.description}
           </p>
         )}

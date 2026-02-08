@@ -3,78 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useGeneratedArt } from '@/lib/ArtContext'
 import FloorIndicator from '@/components/FloorIndicator'
+import TipModal from '@/components/TipModal'
+import StarBorder from '@/components/StarBorder'
+import Floor2Content from '@/components/Floor2Content'
 
 const FLOOR_IDS = ['floor-2', 'floor-1', 'floor-0']
-
-function FloorContent({ navigate, currentFloor, artworks, generatedImages }) {
-  if (!artworks || artworks.length === 0) {
-    return (
-      <div className="w-full h-full flex flex-col items-center justify-center">
-        <motion.div
-          className="w-8 h-8 rounded-full bg-[#1a1a1a]/30"
-          animate={{ opacity: [0.3, 1, 0.3] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        />
-        <p className="mt-4 text-sm text-[#1a1a1a]/40">Loading gallery...</p>
-      </div>
-    )
-  }
-
-  return (
-    <div className="w-full h-full flex flex-col">
-      <header className="shrink-0 text-center pt-8 pb-4">
-        <h1
-          className="text-lg tracking-[0.35em] uppercase text-[#1a1a1a]/50"
-          style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300 }}
-        >
-          Syntaxesia
-        </h1>
-        <p className="text-sm italic text-[#1a1a1a]/30 mt-1">
-          where code becomes art
-        </p>
-      </header>
-
-      <main className="flex-1 flex items-center justify-center px-12">
-        <div className="grid grid-cols-3 gap-10 max-w-5xl">
-          {artworks.map((artwork, i) => {
-            const imageUrl = generatedImages[artwork.id]
-            return (
-              <motion.div
-                key={artwork.id}
-                className="cursor-pointer"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1, duration: 0.6, ease: 'easeOut' }}
-                whileHover={{ scale: 1.05, y: -4 }}
-                onClick={() => navigate(`/artwork/${artwork.id}?from=${currentFloor}`)}
-              >
-                {imageUrl ? (
-                  <img
-                    src={imageUrl}
-                    alt={artwork.placard.title}
-                    className="w-full h-auto drop-shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition-[filter] duration-300 hover:drop-shadow-[0_12px_32px_rgba(0,0,0,0.3)]"
-                    draggable={false}
-                  />
-                ) : (
-                  <div className="w-full aspect-square bg-[#1a1a1a]/5 flex items-center justify-center">
-                    <motion.div
-                      className="w-4 h-4 rounded-full bg-[#1a1a1a]/30"
-                      animate={{ opacity: [0.3, 1, 0.3] }}
-                      transition={{ duration: 1.2, repeat: Infinity }}
-                    />
-                  </div>
-                )}
-                <p className="text-center mt-3 text-sm italic text-[#1a1a1a]/40">
-                  {artwork.placard.title}
-                </p>
-              </motion.div>
-            )
-          })}
-        </div>
-      </main>
-    </div>
-  )
-}
 
 // Floor 1 (Level 1) with background image and wall-mounted frames
 function Floor1Content({ navigate, currentFloor, artworks, generatedImages }) {
@@ -318,6 +251,7 @@ export default function ExhibitionPage() {
   const location = useLocation()
   const containerRef = useRef(null)
   const [activeFloor, setActiveFloor] = useState('floor-1')
+  const [tipOpen, setTipOpen] = useState(false)
   const { artworks, images: generatedImages, generating, status } = useGeneratedArt()
 
   // Track which floor is visible via scroll position
@@ -352,14 +286,14 @@ export default function ExhibitionPage() {
     }
   }, [handleScroll])
 
-  // Scroll to appropriate floor on mount
+  // Scroll to appropriate floor on mount or when coming back from artwork detail
   useEffect(() => {
     const scrollToFloorId = location.state?.scrollToFloor || 'floor-1'
     const targetFloor = document.getElementById(scrollToFloorId)
     if (targetFloor) {
       targetFloor.scrollIntoView({ behavior: 'instant' })
     }
-  }, [])
+  }, [location.state?.scrollToFloor])
 
   const scrollToFloor = (floorId) => {
     const target = document.getElementById(floorId)
@@ -381,15 +315,33 @@ export default function ExhibitionPage() {
         </div>
       )}
 
+      {/* Tip jar button */}
+      <button
+        onClick={() => setTipOpen(true)}
+        className="fixed bottom-8 right-8 z-50 w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
+      >
+        <StarBorder>
+          <img
+            src="/clearjar.png"
+            alt="Tip Jar"
+            className="w-10 h-10 object-contain"
+            draggable={false}
+          />
+        </StarBorder>
+      </button>
+
+      {/* Tip Modal */}
+      <TipModal isOpen={tipOpen} onClose={() => setTipOpen(false)} />
+
       <div ref={containerRef} className="snap-container-no-scroll">
         {FLOOR_IDS.map((id) => (
           <section key={id} id={id} className="snap-section bg-[#f5f0e8]">
-            {id === 'floor-1' ? (
+            {id === 'floor-2' ? (
+              <Floor2Content />
+            ) : id === 'floor-1' ? (
               <Floor1Content navigate={navigate} currentFloor={id} artworks={artworks} generatedImages={generatedImages} />
-            ) : id === 'floor-0' ? (
-              <GroundFloorContent navigate={navigate} currentFloor={id} artworks={artworks} generatedImages={generatedImages} />
             ) : (
-              <FloorContent navigate={navigate} currentFloor={id} artworks={artworks} generatedImages={generatedImages} />
+              <GroundFloorContent navigate={navigate} currentFloor={id} artworks={artworks} generatedImages={generatedImages} />
             )}
           </section>
         ))}
