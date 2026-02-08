@@ -306,8 +306,21 @@ export default function ExhibitionPage() {
     <div className="w-full h-full relative bg-[#f5f0e8]">
       <FloorIndicator activeFloor={activeFloor} onFloorClick={scrollToFloor} />
 
-      {/* Status overlay */}
-      {generating && status && (
+      {/* Home button (favicon) */}
+      <button
+        onClick={() => navigate('/')}
+        className="fixed top-8 left-8 z-50 hover:opacity-80 transition-opacity duration-300"
+      >
+        <img
+          src="/favicon_syns.png"
+          alt="Home"
+          className="w-16 h-16 object-contain drop-shadow-lg"
+          draggable={false}
+        />
+      </button>
+
+      {/* Status overlay - hide on floor-2 */}
+      {generating && status && activeFloor !== 'floor-2' && (
         <div className="absolute top-8 left-1/2 -translate-x-1/2 z-50 px-6 py-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg">
           <p className="text-sm text-[#1a1a1a]/70" style={{ fontFamily: 'Inter, sans-serif' }}>
             {status}

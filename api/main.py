@@ -25,9 +25,9 @@ load_dotenv()  # also load .env as fallback
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "").strip()
 print(f"[startup] ELEVENLABS_API_KEY={'SET' if ELEVENLABS_API_KEY else 'MISSING'}")
 DEFAULT_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "Xb7hH8MSUJpSbSDYk0k2").strip()
-DEFAULT_MODEL_ID = os.getenv("ELEVENLABS_MODEL_ID", "eleven_multilingual_v2").strip()
+DEFAULT_MODEL_ID = os.getenv("ELEVENLABS_MODEL_ID", "eleven_turbo_v2_5").strip()
 DEFAULT_OUTPUT_FORMAT = os.getenv("ELEVENLABS_OUTPUT_FORMAT", "mp3_44100_128").strip()
-DEFAULT_STREAMING_LATENCY = os.getenv("ELEVENLABS_STREAMING_LATENCY", "2").strip()
+DEFAULT_STREAMING_LATENCY = os.getenv("ELEVENLABS_STREAMING_LATENCY", "0").strip()
 
 # Anthropic API key (for placard generation with Claude)
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "").strip()
@@ -223,6 +223,157 @@ async def tts_post(payload: TTSRequest):
         model_id=payload.model_id,
     )
     return StreamingResponse(audio_stream, media_type="audio/mpeg")
+
+
+# ============================================
+# Met Museum Women Artists Search
+# ============================================
+
+import random
+
+MET_API_BASE = "https://collectionapi.metmuseum.org/public/collection/v1"
+
+# Hardcoded keyword -> objectID mappings (curated from met_women_artists.json)
+HARDCODED_KEYWORDS = {
+    "colorful":       [10868, 10838, 12546, 13348, 15988, 16450, 14317, 13743],
+    "textile":        [13756, 14055, 16149, 21304, 21660, 18954, 219509, 228665],
+    "portrait":       [10958, 12656, 15066, 15071, 15180, 230970, 231016, 286114],
+    "abstract":       [13875, 13882, 13904, 13905, 13910, 14199, 48932, 19747],
+    "watercolor":     [10731, 10838, 10868, 12546, 13348, 15988, 19757, 19758],
+    "impressionist":  [16345, 21126, 189716, 13348, 15988, 11271, 11272, 78569],
+    "contemporary":   [286114, 10344, 20194, 78569, 11554, 14676, 14822, 19838],
+}
+
+# Load curated women artist names at startup
+_women_artist_names: set = set()
+
+def _load_women_artists():
+    global _women_artist_names
+    json_path = os.path.join(os.path.dirname(__file__), "..", "public", "met_women_artists.json")
+    try:
+        with open(json_path) as f:
+            items = json.load(f)
+        _women_artist_names = set(
+            item["artist"].lower().strip()
+            for item in items if item.get("artist")
+        )
+        print(f"[met] Loaded {len(_women_artist_names)} curated women artist names")
+    except Exception as e:
+        print(f"[met] Failed to load women artists JSON: {e}")
+
+_load_women_artists()
+
+
+@app.get("/api/met/women-artists")
+async def met_women_artists(q: str = Query(...)):
+    """Search Met collection, return 8 artworks by women artists."""
+    print(f"[met] Searching for: {q}")
+    query_lower = q.strip().lower()
+
+    # Check for hardcoded keyword match
+    hardcoded_ids = HARDCODED_KEYWORDS.get(query_lower)
+    if hardcoded_ids:
+        print(f"[met] Hardcoded match for '{query_lower}', fetching {len(hardcoded_ids)} objects")
+        met_headers = {"User-Agent": "SyntaxesiaApp/1.0"}
+        async with httpx.AsyncClient(timeout=30.0, headers=met_headers) as client:
+            tasks = [client.get(f"{MET_API_BASE}/objects/{oid}") for oid in hardcoded_ids]
+            responses = await asyncio.gather(*tasks, return_exceptions=True)
+            results = []
+            for r in responses:
+                if isinstance(r, Exception) or r.status_code != 200:
+                    continue
+                try:
+                    obj = r.json()
+                except Exception:
+                    continue
+                if not (obj.get("primaryImage") or obj.get("primaryImageSmall")):
+                    continue
+                results.append({
+                    "url": obj.get("primaryImage") or obj.get("primaryImageSmall"),
+                    "title": obj.get("title", "Untitled"),
+                    "artist": obj.get("artistDisplayName") or obj.get("culture") or "Unknown",
+                    "date": obj.get("objectDate", ""),
+                    "medium": obj.get("medium", ""),
+                    "department": obj.get("department", ""),
+                    "description": obj.get("creditLine") or obj.get("department", ""),
+                })
+                print(f"[met] ✓ {results[-1]['artist']} - {results[-1]['title']}")
+            print(f"[met] Done! Returning {len(results)} hardcoded artworks")
+            return results
+
+    # Fallback: live search for non-hardcoded keywords
+    search_terms = [t.lower() for t in q.split() if len(t) > 1]
+
+    met_headers = {"User-Agent": "SyntaxesiaApp/1.0"}
+    async with httpx.AsyncClient(timeout=30.0, headers=met_headers) as client:
+        resp = await client.get(f"{MET_API_BASE}/search", params={"q": q, "hasImages": "true"})
+        if resp.status_code != 200:
+            print(f"[met] Search API returned {resp.status_code}")
+            return []
+        data = resp.json()
+        object_ids = data.get("objectIDs") or []
+        print(f"[met] Found {len(object_ids)} total results")
+
+        if not object_ids:
+            return []
+
+        random.shuffle(object_ids)
+        results = []
+
+        for i in range(0, min(len(object_ids), 500), 10):
+            if len(results) >= 8:
+                break
+
+            batch = object_ids[i:i+10]
+            tasks = [client.get(f"{MET_API_BASE}/objects/{oid}") for oid in batch]
+            responses = await asyncio.gather(*tasks, return_exceptions=True)
+
+            for r in responses:
+                if len(results) >= 8:
+                    break
+                if isinstance(r, Exception):
+                    continue
+                if r.status_code != 200:
+                    continue
+                try:
+                    obj = r.json()
+                except Exception:
+                    continue
+
+                if not (obj.get("primaryImage") or obj.get("primaryImageSmall")):
+                    continue
+
+                # Check keywords in tags, medium, classification, objectName, title
+                tags_text = " ".join(t.get("term", "") for t in (obj.get("tags") or []))
+                searchable = " ".join([
+                    obj.get("title", ""),
+                    obj.get("medium", ""),
+                    obj.get("classification", ""),
+                    obj.get("objectName", ""),
+                    tags_text,
+                ]).lower()
+                if not any(term in searchable for term in search_terms):
+                    continue
+
+                # Verify female: artistGender has any value OR name in curated list
+                artist_name = (obj.get("artistDisplayName") or "").lower().strip()
+                is_woman = bool(obj.get("artistGender")) or artist_name in _women_artist_names
+                if not is_woman:
+                    continue
+
+                results.append({
+                    "url": obj.get("primaryImage") or obj.get("primaryImageSmall"),
+                    "title": obj.get("title", "Untitled"),
+                    "artist": obj.get("artistDisplayName") or obj.get("culture") or "Unknown",
+                    "date": obj.get("objectDate", ""),
+                    "medium": obj.get("medium", ""),
+                    "department": obj.get("department", ""),
+                    "description": obj.get("creditLine") or obj.get("department", ""),
+                })
+                print(f"[met] ✓ {results[-1]['artist']} - {results[-1]['title']}")
+
+        print(f"[met] Done! Returning {len(results)} artworks")
+        return results
 
 
 # ============================================

@@ -1,145 +1,155 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { useGeneratedArt } from '@/lib/ArtContext'
+import DecryptedText from '../components/DecryptedText'
+import FuzzyText from '../components/FuzzyText'
+import Loading from '../components/Loading'
+import GlassSearchBar from '../components/GlassSearchBar'
 
 export default function LandingPage() {
-  const [githubUrl, setGithubUrlLocal] = useState('')
-  const [status, setStatus] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
   const navigate = useNavigate()
   const { setGithubUrl } = useGeneratedArt()
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 3000)
+    return () => clearTimeout(timer)
+  }, [])
+
+  const handleSearch = (query) => {
+    if (!query) return
+    setGithubUrl(query)
+    navigate('/exhibition')
+  }
+
+  if (isLoading) {
+    return <Loading />
+  }
+
   return (
-    <main
-      className="relative min-h-screen overflow-hidden px-6 py-10 sm:px-10 flex"
-      style={{
-        background:
-          'radial-gradient(circle at 50% 0%, rgba(250,246,238,0.98), rgba(208,190,165,0.98) 52%, rgba(168,145,120,0.98) 100%)',
-      }}
-    >
-      {/* Ambient glow */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(60% 50% at 50% 25%, rgba(255,255,255,0.45), rgba(255,255,255,0.0) 60%)',
-        }}
-      />
-      {/* Arch */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[70vh] max-w-5xl"
-        style={{
-          borderRadius: '200px 200px 80px 80px',
-          boxShadow:
-            'inset 0 0 0 2px rgba(255,255,255,0.35), inset 0 -30px 80px rgba(110,85,60,0.25)',
-          background:
-            'linear-gradient(180deg, rgba(255,255,255,0.5), rgba(210,190,165,0.5) 45%, rgba(160,135,110,0.55) 100%)',
-          opacity: 0.7,
-          zIndex: 1,
-        }}
-      />
-      {/* Left wall */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-0 w-[18vw] max-w-[220px]"
-        style={{
-          background:
-            'linear-gradient(180deg, rgba(255,255,255,0.85), rgba(175,150,125,0.9))',
-          boxShadow:
-            'inset -10px 0 25px rgba(0,0,0,0.18), 0 20px 60px rgba(0,0,0,0.18)',
-          borderTopRightRadius: '40px',
-          zIndex: 2,
-        }}
-      />
-      {/* Right wall */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 right-0 w-[18vw] max-w-[220px]"
-        style={{
-          background:
-            'linear-gradient(180deg, rgba(255,255,255,0.85), rgba(175,150,125,0.9))',
-          boxShadow:
-            'inset 10px 0 25px rgba(0,0,0,0.18), 0 20px 60px rgba(0,0,0,0.18)',
-          borderTopLeftRadius: '40px',
-          zIndex: 2,
-        }}
-      />
-      {/* Bottom gradient */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 left-0 right-0 h-52"
-        style={{
-          background:
-            'linear-gradient(180deg, rgba(0,0,0,0), rgba(90,70,55,0.25) 60%, rgba(70,55,45,0.38) 100%)',
-        }}
-      />
+    <main className="relative h-screen w-screen overflow-hidden bg-black">
+      
+      {/* 1. The Mockup Image (Background Frame) */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="/landing%20mock%20final.jpg" 
+          alt="Vintage Computer Terminal"
+          className="h-full w-full object-cover pointer-events-none select-none"
+        />
+      </div>
 
-      <div
-        className="relative mx-auto flex w-full max-w-xl flex-1 flex-col items-center gap-6 text-center"
-        style={{ zIndex: 3, minHeight: '100%' }}
+      {/* 2. The Screen Content Area (Center) */}
+      <div 
+        className="absolute z-10 overflow-hidden bg-black"
+        style={{
+          top: '50%',
+          left: '50%',
+          width: '47%',
+          height: '53%',
+          transform: 'translate(-50%, -50%) perspective(1000px) rotateX(0deg) rotateY(0deg)'
+        }}
       >
-        <header className="mt-20 space-y-3">
-          <h1
-            className="font-semibold tracking-[0.34em] text-[#1a1a1a]"
-            style={{
-              fontSize: 'clamp(2.25rem, 7vw, 5rem)',
-              fontFamily: 'Cormorant Garamond, serif',
-            }}
-          >
-            SYNTAXESIA
-          </h1>
-          <p className="mx-auto max-w-xl text-sm text-[#1a1a1a]/65 sm:text-base">
-            Enter a GitHub repository URL and we&apos;ll turn its code into a gallery of abstract art.
-          </p>
-        </header>
-
-        <section className="flex w-full flex-col gap-3">
-          <label
-            htmlFor="github-url-input"
-            className="text-xs uppercase tracking-[0.3em] text-[#1a1a1a]/60"
-            style={{ fontFamily: 'Inter, sans-serif' }}
-          >
-            GitHub Repository URL
-          </label>
-          <input
-            id="github-url-input"
-            type="url"
-            placeholder="https://github.com/owner/repository"
-            value={githubUrl}
-            onChange={(e) => setGithubUrlLocal(e.target.value)}
-            className="mx-auto w-full max-w-[750px] border border-[#1a1a1a]/20 bg-white/90 px-6 py-4 text-sm text-[#1a1a1a] shadow-[0_16px_40px_rgba(28,28,28,0.08)] outline-none transition focus:border-[#1a1a1a]/50"
-            style={{
-              borderRadius: '28px',
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '14px',
-            }}
+        {/* Background: Video Layer */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <video
+            src="/vid%201%20final.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="h-full w-full object-cover opacity-80"
           />
-          <button
-            className="mx-auto inline-flex items-center justify-center rounded-full bg-[#1a1a1a] px-6 py-3 text-sm font-medium text-[#faf6ee] transition hover:-translate-y-0.5 hover:shadow-[0_18px_45px_rgba(28,28,28,0.25)]"
-            style={{ fontFamily: 'Inter, sans-serif' }}
-            onClick={() => {
-              const trimmed = githubUrl.trim()
-              if (!trimmed) {
-                setStatus('Please enter a GitHub URL.')
-                return
-              }
-              if (!trimmed.startsWith('https://github.com/')) {
-                setStatus('Please enter a valid GitHub URL (https://github.com/owner/repo).')
-                return
-              }
-              // Trigger extraction and placard generation in ArtContext
-              setGithubUrl(trimmed)
-              navigate('/exhibition')
-            }}
+        </div>
+
+        {/* Foreground: UI Layer */}
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 px-4 text-center">
+          <motion.div
+            className="flex flex-col items-center gap-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            Generate Art
-          </button>
-          {status && (
-            <p className="text-center text-xs text-[#1a1a1a]/65">{status}</p>
-          )}
-        </section>
+            <div className="mb-2">
+              <FuzzyText 
+                baseIntensity={0.2} 
+                hoverIntensity={0.5} 
+                fontFamily="Alte Haas Grotesk"
+                fontWeight="bold"
+                fontSize="clamp(2rem, 4vw, 4rem)"
+                color="#fff"
+              >
+                Syntaxesia.
+              </FuzzyText>
+            </div>
+            <DecryptedText
+              text="breathe life into your codespace"
+              animateOn="view"
+              revealDirection="center"
+              speed={100}
+              maxIterations={40}
+              characters="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+"
+              parentClassName="inline-block text-white/70 font-sans text-[clamp(0.7rem,1.2vw,1rem)] tracking-[0.2em]"
+            />
+          </motion.div>
+          
+          <motion.div
+            className="w-full max-w-lg mt-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+          >
+            <GlassSearchBar onSubmit={handleSearch} />
+          </motion.div>
+        </div>
+      </div>
+
+      {/* 3. Left Wall Overlay (Mirrored) */}
+      <div 
+        className="absolute z-10 overflow-hidden bg-black"
+        style={{
+          top: '23.7%',
+          left: '0%',
+          width: '28.5%',
+          height: '52.7%',
+          transformOrigin: 'right center',
+          transform: 'perspective(520px) rotateY(30.7deg) skewY(3.9deg)'
+        }}
+      >
+        <video
+          src="/vid%202%20final.mov"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="h-full w-full object-cover opacity-80"
+        />
+      </div>
+
+      {/* 4. Right Wall Overlay */}
+      <div 
+        className="absolute z-10 overflow-hidden bg-black"
+        style={{
+          top: '23.7%',
+          right: '0%',
+          width: '28.5%',
+          height: '52.7%',
+          transformOrigin: 'left center',
+          transform: 'perspective(520px) rotateY(-30.7deg) skewY(-3.9deg)'
+        }}
+      >
+        <video
+          src="/vid%203%20final.MP4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="h-full w-full object-cover opacity-80"
+        />
       </div>
     </main>
   )
 }
+

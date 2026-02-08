@@ -22,6 +22,7 @@ export default {
         display: ['Cinzel', 'serif'],
         serif: ['Cormorant Garamond', 'serif'],
         mono: ['JetBrains Mono', 'monospace'],
+        sans: ['Alte Haas Grotesk', 'sans-serif'],
       },
     },
   },
