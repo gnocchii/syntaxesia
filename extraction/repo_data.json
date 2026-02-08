@@ -1,0 +1,620 @@
+{
+  "metadata": {
+    "name": "BlockchainFinal",
+    "full_name": "joeykokinda/BlockchainFinal",
+    "description": null,
+    "language": "JavaScript",
+    "stars": 1,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2024-11-19T22:11:38Z",
+    "updated_at": "2025-01-15T22:15:37Z"
+  },
+  "languages": {
+    "breakdown": {
+      "JavaScript": 39158,
+      "Solidity": 5378,
+      "HTML": 1721,
+      "CSS": 669
+    },
+    "percentages": {
+      "JavaScript": 83.45,
+      "Solidity": 11.46,
+      "HTML": 3.67,
+      "CSS": 1.43
+    }
+  },
+  "file_tree": [
+    {
+      "path": ".gitignore",
+      "type": "blob",
+      "size": 257
+    },
+    {
+      "path": "4.5.0",
+      "type": "blob",
+      "size": 477
+    },
+    {
+      "path": "README.md",
+      "type": "blob",
+      "size": 369
+    },
+    {
+      "path": "contracts",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "contracts/BettingToken.sol",
+      "type": "blob",
+      "size": 380
+    },
+    {
+      "path": "contracts/MemeBets.sol",
+      "type": "blob",
+      "size": 3749
+    },
+    {
+      "path": "contracts/mocks",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "contracts/mocks/MockV3Aggregator.sol",
+      "type": "blob",
+      "size": 1249
+    },
+    {
+      "path": "frontend",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "frontend/.gitignore",
+      "type": "blob",
+      "size": 310
+    },
+    {
+      "path": "frontend/README.md",
+      "type": "blob",
+      "size": 3359
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "type": "blob",
+      "size": 675953
+    },
+    {
+      "path": "frontend/package.json",
+      "type": "blob",
+      "size": 1134
+    },
+    {
+      "path": "frontend/postcss.config.js",
+      "type": "blob",
+      "size": 91
+    },
+    {
+      "path": "frontend/public",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "frontend/public/favicon.ico",
+      "type": "blob",
+      "size": 3870
+    },
+    {
+      "path": "frontend/public/index.html",
+      "type": "blob",
+      "size": 1721
+    },
+    {
+      "path": "frontend/public/logo192.png",
+      "type": "blob",
+      "size": 5347
+    },
+    {
+      "path": "frontend/public/logo512.png",
+      "type": "blob",
+      "size": 9664
+    },
+    {
+      "path": "frontend/public/manifest.json",
+      "type": "blob",
+      "size": 492
+    },
+    {
+      "path": "frontend/public/robots.txt",
+      "type": "blob",
+      "size": 67
+    },
+    {
+      "path": "frontend/src",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "frontend/src/App.jsx",
+      "type": "blob",
+      "size": 795
+    },
+    {
+      "path": "frontend/src/components",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "frontend/src/components/home",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "frontend/src/components/home/BettingCard.jsx",
+      "type": "blob",
+      "size": 1511
+    },
+    {
+      "path": "frontend/src/components/home/TrendingBets.jsx",
+      "type": "blob",
+      "size": 608
+    },
+    {
+      "path": "frontend/src/components/layout",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "frontend/src/components/layout/Footer.jsx",
+      "type": "blob",
+      "size": 3771
+    },
+    {
+      "path": "frontend/src/components/layout/Layout.jsx",
+      "type": "blob",
+      "size": 357
+    },
+    {
+      "path": "frontend/src/components/layout/Navbar.jsx",
+      "type": "blob",
+      "size": 1438
+    },
+    {
+      "path": "frontend/src/constants",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "frontend/src/constants/contracts.js",
+      "type": "blob",
+      "size": 4214
+    },
+    {
+      "path": "frontend/src/context",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "frontend/src/context/Web3Context.jsx",
+      "type": "blob",
+      "size": 3799
+    },
+    {
+      "path": "frontend/src/index.css",
+      "type": "blob",
+      "size": 669
+    },
+    {
+      "path": "frontend/src/index.js",
+      "type": "blob",
+      "size": 230
+    },
+    {
+      "path": "frontend/src/pages",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "frontend/src/pages/BettingPage.jsx",
+      "type": "blob",
+      "size": 7930
+    },
+    {
+      "path": "frontend/src/pages/HomePage.jsx",
+      "type": "blob",
+      "size": 2619
+    },
+    {
+      "path": "frontend/src/utils",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "frontend/src/utils/coingeckoService.js",
+      "type": "blob",
+      "size": 830
+    },
+    {
+      "path": "frontend/src/utils/helper.js",
+      "type": "blob",
+      "size": 1349
+    },
+    {
+      "path": "frontend/src/utils/priceFeed.js",
+      "type": "blob",
+      "size": 1269
+    },
+    {
+      "path": "frontend/src/utils/priceService.js",
+      "type": "blob",
+      "size": 1203
+    },
+    {
+      "path": "frontend/src/utils/web3.js",
+      "type": "blob",
+      "size": 333
+    },
+    {
+      "path": "frontend/tailwind.config.js",
+      "type": "blob",
+      "size": 643
+    },
+    {
+      "path": "hardhat.config.js",
+      "type": "blob",
+      "size": 671
+    },
+    {
+      "path": "ignition",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "ignition/modules",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "ignition/modules/Lock.js",
+      "type": "blob",
+      "size": 564
+    },
+    {
+      "path": "package-lock.json",
+      "type": "blob",
+      "size": 310210
+    },
+    {
+      "path": "package.json",
+      "type": "blob",
+      "size": 1025
+    },
+    {
+      "path": "postcss.config.js",
+      "type": "blob",
+      "size": 82
+    },
+    {
+      "path": "scripts",
+      "type": "tree",
+      "size": 0
+    },
+    {
+      "path": "scripts/deploy-and-test.js",
+      "type": "blob",
+      "size": 4226
+    },
+    {
+      "path": "scripts/generate-wallet.js",
+      "type": "blob",
+      "size": 497
+    },
+    {
+      "path": "tailwind.config.js",
+      "type": "blob",
+      "size": 128
+    }
+  ],
+  "readme": "# MemeCoin Battles\n\nThis project is a decentralized blackjack game that is built on the Ethereum blockchain. The game is built using Solidity, Hardhat, and React. The game is deployed on the Scroll Sepolia testnet.\n\n```shell\nnpx hardhat help\nnpx hardhat test\nREPORT_GAS=true npx hardhat test\nnpx hardhat node\nnpx hardhat ignition deploy ./ignition/modules/Lock.js\n```\n\n",
+  "key_files": {
+    "frontend/package.json": "{\n  \"name\": \"frontend\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"dependencies\": {\n    \"@testing-library/jest-dom\": \"^5.17.0\",\n    \"@testing-library/react\": \"^13.4.0\",\n    \"@testing-library/user-event\": \"^13.5.0\",\n    \"ethers\": \"^6.13.4\",\n    \"lucide-react\": \"^0.294.0\",\n    \"react\": \"^18.3.1\",\n    \"react-dom\": \"^18.3.1\",\n    \"react-hot-toast\": \"^2.4.1\",\n    \"react-router-dom\": \"^6.28.0\",\n    \"react-scripts\": \"5.0.1\",\n    \"react-toastify\": \"^10.0.6\",\n    \"recharts\": \"^2.10.3\",\n    \"web-vitals\": \"^2.1.4\",\n    \"web3\": \"^4.15.0\"\n  },\n  \"scripts\": {\n    \"start\": \"react-scripts start\",\n    \"build\": \"react-scripts build\",\n    \"test\": \"react-scripts test\",\n    \"eject\": \"react-scripts eject\"\n  },\n  \"eslintConfig\": {\n    \"extends\": [\n      \"react-app\",\n      \"react-app/jest\"\n    ]\n  },\n  \"browserslist\": {\n    \"production\": [\n      \">0.2%\",\n      \"not dead\",\n      \"not op_mini all\"\n    ],\n    \"development\": [\n      \"last 1 chrome version\",\n      \"last 1 firefox version\",\n      \"last 1 safari version\"\n    ]\n  },\n  \"devDependencies\": {\n    \"autoprefixer\": \"^10.4.20\",\n    \"postcss\": \"^8.4.49\",\n    \"tailwindcss\": \"^3.4.15\"\n  }\n}\n",
+    "frontend/src/index.js": "import React from 'react'\nimport ReactDOM from 'react-dom/client'\nimport App from './App'\nimport './index.css'\n\nReactDOM.createRoot(document.getElementById('root')).render(\n  <React.StrictMode>\n    <App />\n  </React.StrictMode>,\n)",
+    "package.json": "{\n  \"name\": \"hardhat-project\",\n  \"devDependencies\": {\n    \"@chainlink/contracts\": \"^0.8.0\",\n    \"@nomicfoundation/hardhat-chai-matchers\": \"^2.0.0\",\n    \"@nomicfoundation/hardhat-ethers\": \"^3.0.0\",\n    \"@nomicfoundation/hardhat-network-helpers\": \"^1.0.0\",\n    \"@nomicfoundation/hardhat-toolbox\": \"^4.0.0\",\n    \"@nomicfoundation/hardhat-verify\": \"^2.0.0\",\n    \"@typechain/ethers-v6\": \"^0.5.0\",\n    \"@typechain/hardhat\": \"^9.0.0\",\n    \"@types/mocha\": \"^10.0.1\",\n    \"autoprefixer\": \"^10.4.20\",\n    \"chai\": \"^4.2.0\",\n    \"dotenv\": \"^16.4.5\",\n    \"ethers\": \"^6.13.4\",\n    \"hardhat\": \"^2.22.16\",\n    \"hardhat-gas-reporter\": \"^1.0.8\",\n    \"postcss\": \"^8.4.49\",\n    \"solidity-coverage\": \"^0.8.1\",\n    \"tailwindcss\": \"^3.4.15\",\n    \"ts-node\": \"^10.9.1\",\n    \"typechain\": \"^8.3.0\",\n    \"typescript\": \"^5.0.4\"\n  },\n  \"dependencies\": {\n    \"@openzeppelin/contracts\": \"^5.1.0\",\n    \"chart.js\": \"^4.4.1\",\n    \"lightweight-charts\": \"^4.2.1\",\n    \"react-chartjs-2\": \"^5.2.0\",\n    \"react-hot-toast\": \"^2.4.1\",\n    \"recharts\": \"^2.13.3\"\n  }\n}\n"
+  },
+  "summary": {
+    "total_files": 43,
+    "total_directories": 15,
+    "main_language": "JavaScript",
+    "file_types": [
+      "png",
+      "md",
+      "ico",
+      "html",
+      "css",
+      "jsx",
+      "js",
+      "0",
+      "gitignore",
+      "sol",
+      "txt",
+      "json"
+    ]
+  },
+  "analysis": {
+    "complexity": {
+      "largest_files": [
+        {
+          "path": "frontend/package-lock.json",
+          "size": 675953
+        },
+        {
+          "path": "package-lock.json",
+          "size": 310210
+        },
+        {
+          "path": "frontend/public/logo512.png",
+          "size": 9664
+        },
+        {
+          "path": "frontend/src/pages/BettingPage.jsx",
+          "size": 7930
+        },
+        {
+          "path": "frontend/public/logo192.png",
+          "size": 5347
+        }
+      ],
+      "average_file_size_bytes": 24638.6,
+      "total_size_bytes": 1059460,
+      "estimated_lines_of_code": 21189,
+      "max_directory_depth": 4,
+      "deepest_file_path": "frontend/src/components/home/BettingCard.jsx",
+      "total_files": 43
+    },
+    "frameworks": [
+      "React"
+    ],
+    "readme_insights": {
+      "project_type": "ml_ai",
+      "tech_keywords": [
+        "react",
+        "node",
+        "blockchain"
+      ],
+      "features": [],
+      "key_terms": [
+        "MemeCoin",
+        "Battles",
+        "Ethereum",
+        "Solidity",
+        "Hardhat",
+        "React",
+        "Scroll",
+        "Sepolia",
+        "Lock"
+      ]
+    },
+    "code_smells": {
+      "smells": [
+        {
+          "type": "stale_repo",
+          "description": "Last updated 388 days ago",
+          "severity": "medium"
+        },
+        {
+          "type": "massive_file",
+          "description": "Contains frontend/package-lock.json (675953 bytes)",
+          "severity": "high"
+        },
+        {
+          "type": "low_engagement",
+          "description": "Minimal community engagement",
+          "severity": "low"
+        }
+      ],
+      "smell_count": 3,
+      "has_issues": true
+    },
+    "important_files": {
+      "frontend/src/index.js": {
+        "snippet": "import React from 'react'\nimport ReactDOM from 'react-dom/client'\nimport App from './App'\nimport './index.css'\n\nReactDOM.createRoot(document.getElementById('root')).render(\n  <React.StrictMode>\n    <App />\n  </React.StrictMode>,\n)",
+        "lines": 10,
+        "size": 230,
+        "importance_score": 300.23,
+        "saved_to": "code_samples/frontend_src_index.js"
+      },
+      "package.json": {
+        "snippet": "{\n  \"name\": \"hardhat-project\",\n  \"devDependencies\": {\n    \"@chainlink/contracts\": \"^0.8.0\",\n    \"@nomicfoundation/hardhat-chai-matchers\": \"^2.0.0\",\n    \"@nomicfoundation/hardhat-ethers\": \"^3.0.0\",\n    \"@nomicfoundation/hardhat-network-helpers\": \"^1.0.0\",\n    \"@nomicfoundation/hardhat-toolbox\": \"^4.0.0\",\n    \"@nomicfoundation/hardhat-verify\": \"^2.0.0\",\n    \"@typechain/ethers-v6\": \"^0.5.0\",\n    \"@typechain/hardhat\": \"^9.0.0\",\n    \"@types/mocha\": \"^10.0.1\",\n    \"autoprefixer\": \"^10.4.20\",\n    \"chai\": \"^4.2.0\",\n    \"dotenv\": \"^16.4.5\",\n    \"ethers\": \"^6.13.4\",\n    \"hardhat\": \"^2.22.16\",\n    \"hardhat-gas-reporter\": \"^1.0.8\",\n    \"postcss\": \"^8.4.49\",\n    \"solidity-coverage\": \"^0.8.1\",\n    \"tailwindcss\": \"^3.4.15\",\n    \"ts-node\": \"^10.9.1\",\n    \"typechain\": \"^8.3.0\",\n    \"typescript\": \"^5.0.4\"\n  },\n  \"dependencies\": {\n    \"@openzeppelin/contracts\": \"^5.1.0\",\n    \"chart.js\": \"^4.4.1\",\n    \"lightweight-charts\": \"^4.2.1\",\n    \"react-chartjs-2\": \"^5.2.0\",\n    \"react-hot-toast\": \"^2.4.1\",\n    \"recharts\": \"^2.13.3\"\n  }\n}\n",
+        "lines": 35,
+        "size": 1025,
+        "importance_score": 201.025,
+        "saved_to": "code_samples/package.json"
+      },
+      "frontend/package.json": {
+        "snippet": "{\n  \"name\": \"frontend\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"dependencies\": {\n    \"@testing-library/jest-dom\": \"^5.17.0\",\n    \"@testing-library/react\": \"^13.4.0\",\n    \"@testing-library/user-event\": \"^13.5.0\",\n    \"ethers\": \"^6.13.4\",\n    \"lucide-react\": \"^0.294.0\",\n    \"react\": \"^18.3.1\",\n    \"react-dom\": \"^18.3.1\",\n    \"react-hot-toast\": \"^2.4.1\",\n    \"react-router-dom\": \"^6.28.0\",\n    \"react-scripts\": \"5.0.1\",\n    \"react-toastify\": \"^10.0.6\",\n    \"recharts\": \"^2.10.3\",\n    \"web-vitals\": \"^2.1.4\",\n    \"web3\": \"^4.15.0\"\n  },\n  \"scripts\": {\n    \"start\": \"react-scripts start\",\n    \"build\": \"react-scripts build\",\n    \"test\": \"react-scripts test\",\n    \"eject\": \"react-scripts eject\"\n  },\n  \"eslintConfig\": {\n    \"extends\": [\n      \"react-app\",\n      \"react-app/jest\"\n    ]\n  },\n  \"browserslist\": {\n    \"production\": [\n      \">0.2%\",\n      \"not dead\",\n      \"not op_mini all\"\n    ],\n    \"development\": [\n      \"last 1 chrome version\",\n      \"last 1 firefox version\",\n      \"last 1 safari version\"\n    ]\n  },\n  \"devDependencies\": {\n    \"autoprefixer\": \"^10.4.20\",\n    \"postcss\": \"^8.4.49\",\n    \"tailwindcss\": \"^3.4.15\"\n  }\n}\n",
+        "lines": 51,
+        "size": 1134,
+        "importance_score": 191.13400000000001,
+        "saved_to": "code_samples/frontend_package.json"
+      },
+      "hardhat.config.js": {
+        "snippet": "require(\"@nomicfoundation/hardhat-toolbox\");\nrequire('dotenv').config();\n\n/** @type import('hardhat/config').HardhatUserConfig */\nmodule.exports = {\n  solidity: {\n    version: \"0.8.20\",\n    settings: {\n      optimizer: {\n        enabled: true,\n        runs: 200\n      }\n    }\n  },\n  networks: {\n    hardhat: {\n      chainId: 31337\n    },\n    localhost: {\n      url: \"http://127.0.0.1:8545\",\n      chainId: 31337,\n    },\n    sepolia: {\n      url: process.env.SEPOLIA_RPC_URL,\n      accounts: [process.env.PRIVATE_KEY],\n      chainId: 11155111,\n    }\n  },\n  paths: {\n    sources: \"./contracts\",\n    tests: \"./test\",\n    cache: \"./cache\",\n    artifacts: \"./artifacts\"\n  }\n};",
+        "lines": 35,
+        "size": 671,
+        "importance_score": 170.671,
+        "saved_to": "code_samples/hardhat.config.js"
+      },
+      "tailwind.config.js": {
+        "snippet": "/** @type {import('tailwindcss').Config} */\nmodule.exports = {\n  content: [],\n  theme: {\n    extend: {},\n  },\n  plugins: [],\n}\n\n",
+        "lines": 10,
+        "size": 128,
+        "importance_score": 170.128,
+        "saved_to": "code_samples/tailwind.config.js"
+      },
+      "postcss.config.js": {
+        "snippet": "module.exports = {\n  plugins: {\n    tailwindcss: {},\n    autoprefixer: {},\n  },\n}\n",
+        "lines": 7,
+        "size": 82,
+        "importance_score": 170.082,
+        "saved_to": "code_samples/postcss.config.js"
+      },
+      "frontend/tailwind.config.js": {
+        "snippet": "/** @type {import('tailwindcss').Config} */\nexport default {\n    content: [\n      \"./index.html\",\n      \"./src/**/*.{js,ts,jsx,tsx}\",\n    ],\n    theme: {\n      extend: {\n        colors: {\n          // Dark theme colors\n          background: {\n            DEFAULT: '#1C2631',\n            dark: '#0F172A'\n          },\n          primary: {\n            DEFAULT: '#3B82F6',\n            dark: '#2563EB'\n          },\n          secondary: {\n            DEFAULT: '#232D3F',\n            dark: '#1E2632'\n          },\n          accent: {\n            DEFAULT: '#6366F1',\n            dark: '#4F46E5'\n          }\n        }\n      }\n    },\n    plugins: [],\n  }",
+        "lines": 31,
+        "size": 643,
+        "importance_score": 160.643,
+        "saved_to": "code_samples/frontend_tailwind.config.js"
+      },
+      "frontend/postcss.config.js": {
+        "snippet": "module.exports = {\n    plugins: {\n      tailwindcss: {},\n      autoprefixer: {},\n    },\n  }",
+        "lines": 6,
+        "size": 91,
+        "importance_score": 160.091,
+        "saved_to": "code_samples/frontend_postcss.config.js"
+      },
+      "package-lock.json": {
+        "snippet": "{\n  \"name\": \"hardhat-project\",\n  \"lockfileVersion\": 3,\n  \"requires\": true,\n  \"packages\": {\n    \"\": {\n      \"name\": \"hardhat-project\",\n      \"dependencies\": {\n        \"@openzeppelin/contracts\": \"^5.1.0\",\n        \"chart.js\": \"^4.4.1\",\n        \"lightweight-charts\": \"^4.2.1\",\n        \"react-chartjs-2\": \"^5.2.0\",\n        \"react-hot-toast\": \"^2.4.1\",\n        \"recharts\": \"^2.13.3\"\n      },\n      \"devDependencies\": {\n        \"@chainlink/contracts\": \"^0.8.0\",\n        \"@nomicfoundation/hardhat-chai-matchers\": \"^2.0.0\",\n        \"@nomicfoundation/hardhat-ethers\": \"^3.0.0\",\n        \"@nomicfoundation/hardhat-network-helpers\": \"^1.0.0\",\n        \"@nomicfoundation/hardhat-toolbox\": \"^4.0.0\",\n        \"@nomicfoundation/hardhat-verify\": \"^2.0.0\",\n        \"@typechain/ethers-v6\": \"^0.5.0\",\n        \"@typechain/hardhat\": \"^9.0.0\",\n        \"@types/mocha\": \"^10.0.1\",\n        \"autoprefixer\": \"^10.4.20\",\n        \"chai\": \"^4.2.0\",\n        \"dotenv\": \"^16.4.5\",\n        \"ethers\": \"^6.13.4\",\n        \"hardhat\": \"^2.22.16\",\n        \"hardhat-gas-reporter\": \"^1.0.8\",\n        \"postcss\": \"^8.4.49\",\n        \"solidity-coverage\": \"^0.8.1\",\n        \"tailwindcss\": \"^3.4.15\",\n        \"ts-node\": \"^10.9.1\",\n        \"typechain\": \"^8.3.0\",\n        \"typescript\": \"^5.0.4\"\n      }\n    },\n    \"node_modules/@adraffy/ens-normalize\": {\n      \"version\": \"1.10.1\",\n      \"resolved\": \"https://registry.npmjs.org/@adraffy/ens-normalize/-/ens-normalize-1.10.1.tgz\",\n      \"integrity\": \"sha512-96Z2IP3mYmF1Xg2cDm8f1gWGf/HUVedQ3FMifV4kG/PQ4yEP51xDtRAEfhVNt5f/uzpNkZHwWQuUcu6D6K+Ekw==\",\n      \"dev\": true\n    },\n    \"node_modules/@alloc/quick-lru\": {\n      \"version\": \"5.2.0\",\n      \"resolved\": \"https://registry.npmjs.org/@alloc/quick-lru/-/quick-lru-5.2.0.tgz\",\n      \"integrity\": \"sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==\",\n      \"dev\": true,\n      \"engines\": {\n        \"node\": \">=10\"\n      },\n      \"funding\": {\n        \"url\": \"https://github.com/sponsors/sindresorhus\"\n      }\n    },\n    \"node_modules/@babel/runtime\": {\n      \"version\": \"7.26.0\",\n      \"resolved\": \"https://registry.npmjs.org/@babel/runtime/-/runtime-7.26.0.tgz\",\n      \"integrity\": \"sha512-FDSOghenHTiToteC/QRlv2q3DhPZ/oOXTBoirfWNx1Cx3TMVcGWQtMMmQcSvb/JjpNeGzx8Pq/b4fKEJuWm1sw==\",\n      \"dependencies\": {\n        \"regenerator-runtime\": \"^0.14.0\"\n      },\n      \"engines\": {\n        \"node\": \">=6.9.0\"\n      }\n    },\n    \"node_modules/@chainlink/contracts\": {\n      \"version\": \"0.8.0\",\n      \"resolved\": \"https://registry.npmjs.org/@chainlink/contracts/-/contracts-0.8.0.tgz\",\n      \"integrity\": \"sha512-nUv1Uxw5Mn92wgLs2bgPYmo8hpdQ3s9jB/lcbdU0LmNOVu0hbfmouVnqwRLa28Ll50q6GczUA+eO0ikNIKLZsA==\",\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"@eth-optimism/contracts\": \"^0.5.21\",\n        \"@openzeppelin/contracts\": \"~4.3.3\",\n        \"@openzeppelin/contracts-upgradeable-4.7.3\": \"npm:@openzeppelin/contracts-upgradeable@v4.7.3\",\n        \"@openzeppelin/contracts-v0.7\": \"npm:@openzeppelin/contracts@v3.4.2\"\n      }\n    },\n    \"node_modules/@chainlink/contracts/node_modules/@eth-optimism/contracts\": {\n      \"version\": \"0.5.40\",\n      \"resolved\": \"https://registry.npmjs.org/@eth-optimism/contracts/-/contracts-0.5.40.tgz\",\n      \"integrity\": \"sha512-MrzV0nvsymfO/fursTB7m/KunkPsCndltVgfdHaT1Aj5Vi6R/doKIGGkOofHX+8B6VMZpuZosKCMQ5lQuqjt8w==\",\n      \"dev\": true,\n      \"dependencies\": {\n        \"@eth-optimism/core-utils\": \"0.12.0\",\n        \"@ethersproject/abstract-provider\": \"^5.7.0\",\n        \"@ethersproject/abstract-signer\": \"^5.7.0\"\n      },\n      \"peerDependencies\": {\n        \"ethers\": \"^5\"\n      }\n    },\n    \"node_modules/@chainlink/contracts/node_modules/@openzeppelin/contracts\": {\n      \"version\": \"4.3.3\",\n      \"resolved\": \"https://registry.npmjs.org/@openzeppelin/contracts/-/contracts-4.3.3.tgz\",\n      \"integrity\": \"sha512-tDBopO1c98Yk7Cv/PZlHqrvtVjlgK5R4J6jxLwoO7qxK4xqOiZG+zSkIvGFpPZ0ikc3QOED3plgdqjgNTnBc7g==\",\n      \"dev\": true,\n      \"license\": \"MIT\"\n    },\n    \"node_modules/@chainlink/contracts/node_modules/ethers\": {\n      \"version\": \"5.7.2\",\n      \"resolved\": \"https://registry.npmjs.org/ethers/-/ethers-5.7.2.tgz\",\n      \"integrity\": \"sha512-wswUsmWo1aOK8rR7DIKiWSw9DbLWe6x98Jrn8wcTflTVvaXhAMaB5zGAXy0GYQEQp9iO1iSHWVyARQm11zUtyg==\",\n      \"dev\": true,\n      \"funding\": [\n        {\n          \"type\": \"individual\",\n          \"url\": \"https://gitcoin.co/grants/13/ethersjs-complete-simple-and-tiny-2\"\n        },\n        {\n          \"type\": \"individual\",\n          \"url\": \"https://www.buymeacoffee.com/ricmoo\"\n        }\n      ],\n      \"peer\": true,\n      \"dependencies\": {\n        \"@ethersproject/abi\": \"5.7.0\",\n        \"@ethersproject/abstract-provider\": \"5.7.0\",\n        \"@ethersproject/abstract-signer\": \"5.7.0\",\n        \"@ethersproject/address\": \"5.7.0\",\n        \"@ethersproject/base64\": \"5.7.0\",\n        \"@ethersproject/basex\": \"5.7.0\",\n        \"@ethersproject/bignumber\": \"5.7.0\",\n        \"@ethersproject/bytes\": \"5.7.0\",\n        \"@ethersproject/constants\": \"5.7.0\",\n        \"@ethersproject/contracts\": \"5.7.0\",\n        \"@ethersproject/hash\": \"5.7.0\",\n        \"@ethersproject/hdnode\": \"5.7.0\",\n        \"@ethersproject/json-wallets\": \"5.7.0\",\n        \"@ethersproject/keccak256\": \"5.7.0\",\n        \"@ethersproject/logger\": \"5.7.0\",\n        \"@ethersproject/networks\": \"5.7.1\",\n        \"@ethersproject/pbkdf2\": \"5.7.0\",\n        \"@ethersproject/properties\": \"5.7.0\",\n        \"@ethersproject/providers\": \"5.7.2\",\n        \"@ethersproject/random\": \"5.7.0\",\n        \"@ethersproject/rlp\": \"5.7.0\",\n        \"@ethersproject/sha2\": \"5.7.0\",\n        \"@ethersproject/signing-key\": \"5.7.0\",\n        \"@ethersproject/solidity\": \"5.7.0\",\n        \"@ethersproject/strings\": \"5.7.0\",\n        \"@ethersproject/transactions\": \"5.7.0\",\n        \"@ethersproject/units\": \"5.7.0\",\n        \"@ethersproject/wallet\": \"5.7.0\",\n        \"@ethersproject/web\": \"5.7.1\",\n        \"@ethersproject/wordlists\": \"5.7.0\"\n      }\n    },\n    \"node_modules/@cspotcode/source-map-support\": {\n      \"version\": \"0.8.1\",\n      \"resolved\": \"https://registry.npmjs.org/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz\",\n      \"integrity\": \"sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==\",\n      \"dev\": true,\n      \"dependencies\": {\n        \"@jridgewell/trace-mapping\": \"0.3.9\"\n      },\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@eth-optimism/core-utils\": {\n      \"version\": \"0.12.0\",\n      \"resolved\": \"https://registry.npmjs.org/@eth-optimism/core-utils/-/core-utils-0.12.0.tgz\",\n      \"integrity\": \"sha512-qW+7LZYCz7i8dRa7SRlUKIo1VBU8lvN0HeXCxJR+z+xtMzMQpPds20XJNCMclszxYQHkXY00fOT6GvFw9ZL6nw==\",\n      \"dev\": true,\n      \"dependencies\": {\n        \"@ethersproject/abi\": \"^5.7.0\",\n        \"@ethersproject/abstract-provider\": \"^5.7.0\",\n        \"@ethersproject/address\": \"^5.7.0\",\n        \"@ethersproject/bignumber\": \"^5.7.0\",\n        \"@ethersproject/bytes\": \"^5.7.0\",\n        \"@ethersproject/constants\": \"^5.7.0\",\n        \"@ethersproject/contracts\": \"^5.7.0\",\n        \"@ethersproject/hash\": \"^5.7.0\",\n        \"@ethersproject/keccak256\": \"^5.7.0\",\n        \"@ethersproject/properties\": \"^5.7.0\",\n        \"@ethersproject/providers\": \"^5.7.0\",\n        \"@ethersproject/rlp\": \"^5.7.0\",\n        \"@ethersproject/transactions\": \"^5.7.0\",\n        \"@ethersproject/web\": \"^5.7.0\",\n        \"bufio\": \"^1.0.7\",\n        \"chai\": \"^4.3.4\"\n      }\n    },\n    \"node_modules/@ethereumjs/rlp\": {\n      \"version\": \"4.0.1\",\n      \"resolved\": \"https://registry.npmjs.org/@ethereumjs/rlp/-/rlp-4.0.1.tgz\",\n      \"integrity\": \"sha512-tqsQiBQDQdmPWE1xkkBq4rlSW5QZpLOUJ5RJh2/9fug+q9tnUhuZoVLk7s0scUIKTOzEtR72DFBXI4WiZcMpvw==\",\n      \"dev\": true,\n      \"bin\": {\n        \"rlp\": \"bin/rlp\"\n      },\n      \"engines\": {\n        \"node\": \">=14\"\n      }\n    },\n    \"node_modules/@ethereumjs/util\": {",
+        "lines": 8371,
+        "size": 310210,
+        "importance_score": 150,
+        "saved_to": "code_samples/package-lock.json"
+      },
+      "frontend/src/utils/helper.js": {
+        "snippet": "import { ethers } from 'ethers';\n\nexport const shortenAddress = (address) => {\n  if (!address) return '';\n  return `${address.slice(0, 6)}...${address.slice(-4)}`;\n};\n\nexport const formatAmount = (amount, decimals = 4) => {\n  if (!amount) return '0';\n  return Number(amount).toFixed(decimals);\n};\n\nexport const formatEther = (wei) => {\n  if (!wei) return '0';\n  return ethers.utils.formatEther(wei);\n};\n\nexport const parseEther = (eth) => {\n  if (!eth) return '0';\n  return ethers.utils.parseEther(eth.toString());\n};\n\nexport const calculateTimeLeft = (deadline) => {\n  const difference = +new Date(deadline) - +new Date();\n  if (difference <= 0) return { minutes: '00', seconds: '00' };\n\n  const minutes = Math.floor((difference / 1000 / 60) % 60);\n  const seconds = Math.floor((difference / 1000) % 60);\n\n  return {\n    minutes: minutes < 10 ? `0${minutes}` : minutes,\n    seconds: seconds < 10 ? `0${seconds}` : seconds,\n  };\n};\n\nexport const calculatePriceChange = (oldPrice, newPrice) => {\n  if (!oldPrice || !newPrice) return '0';\n  const change = ((newPrice - oldPrice) / oldPrice) * 100;\n  return change.toFixed(2);\n};\n\nexport const formatVolume = (volume) => {\n  if (volume >= 1000000) {\n    return `$${(volume / 1000000).toFixed(2)}M`;\n  }\n  if (volume >= 1000) {\n    return `$${(volume / 1000).toFixed(2)}K`;\n  }\n  return `$${volume}`;\n};",
+        "lines": 50,
+        "size": 1349,
+        "importance_score": 141.349,
+        "saved_to": "code_samples/frontend_src_utils_helper.js"
+      },
+      "frontend/src/App.jsx": {
+        "snippet": "import React from 'react';\nimport { BrowserRouter as Router, Routes, Route } from 'react-router-dom';\nimport { Web3Provider } from './context/Web3Context';\nimport HomePage from './pages/HomePage';\nimport BettingPage from './pages/BettingPage';\nimport { Toaster } from 'react-hot-toast';\n\nfunction App() {\n  return (\n    <Web3Provider>\n      <Router>\n        <Routes>\n          <Route path=\"/\" element={<HomePage />} />\n          <Route path=\"/bet/:pair\" element={<BettingPage />} />\n        </Routes>\n        <Toaster\n          position=\"bottom-right\"\n          toastOptions={{\n            duration: 5000,\n            style: {\n              background: '#232D3F',\n              color: '#fff',\n            },\n          }}\n        />\n      </Router>\n    </Web3Provider>\n  );\n}\n\nexport default App;",
+        "lines": 31,
+        "size": 795,
+        "importance_score": 130.79500000000002,
+        "saved_to": "code_samples/frontend_src_App.jsx"
+      },
+      "scripts/deploy-and-test.js": {
+        "snippet": "const { ethers } = require(\"hardhat\");\n\nasync function main() {\n    try {\n        console.log(\"Starting deployment and test...\");\n\n        // Deploy BettingToken\n        console.log(\"Deploying BettingToken...\");\n        const BettingToken = await ethers.getContractFactory(\"BettingToken\");\n        const bettingToken = await BettingToken.deploy();\n        await bettingToken.waitForDeployment();\n        console.log(\"BettingToken deployed to:\", await bettingToken.getAddress());\n\n        // Deploy mock price feeds\n        console.log(\"Deploying Mock Price Feeds...\");\n        const MockV3Aggregator = await ethers.getContractFactory(\"MockV3Aggregator\");\n        const mockDogeFeed = await MockV3Aggregator.deploy(8, 100000000);\n        const mockShibFeed = await MockV3Aggregator.deploy(8, 1000000);\n        await mockDogeFeed.waitForDeployment();\n        await mockShibFeed.waitForDeployment();\n        console.log(\"Mock DOGE Feed deployed to:\", await mockDogeFeed.getAddress());\n        console.log(\"Mock SHIB Feed deployed to:\", await mockShibFeed.getAddress());\n\n        // Deploy MemeBets\n        console.log(\"Deploying MemeBets...\");\n        const MemeBets = await ethers.getContractFactory(\"MemeBets\");\n        const memeBets = await MemeBets.deploy(\n            await mockDogeFeed.getAddress(),\n            await mockShibFeed.getAddress(),\n            await bettingToken.getAddress()\n        );\n        await memeBets.waitForDeployment();\n        console.log(\"MemeBets deployed to:\", await memeBets.getAddress());\n\n        // Get signers\n        const [owner] = await ethers.getSigners();\n        const user1 = owner;\n        console.log(\"Using owner address:\", owner.address);\n        console.log(\"Using user1 address:\", user1.address);\n        \n        // Approve tokens for withdrawal\n        console.log(\"\\nApproving tokens for withdrawal...\");\n        await bettingToken.approve(await memeBets.getAddress(), ethers.parseEther(\"1000\"));\n\n        const contractWithSigner = memeBets.connect(user1);\n\n        //depo\n        console.log(\"\\nTesting deposit...\");\n        const depositAmount = ethers.parseEther(\"15\");\n        const depositTx = await contractWithSigner.deposit({ value: depositAmount });\n        await depositTx.wait();\n\n        let balance = await contractWithSigner.userBalances(user1.address);\n        console.log(\"Balance after deposit:\", ethers.formatEther(balance), \"ETH\");\n\n        //placing a bet\n        const betAmount = ethers.parseEther(\"10\");\n        console.log(\"\\nPlacing bet of\", ethers.formatEther(betAmount), \"ETH\");\n        const placeBetTx = await contractWithSigner.placeBet(true, betAmount);\n        await placeBetTx.wait();\n\n        balance = await contractWithSigner.userBalances(user1.address);\n        console.log(\"Balance after placing bet:\", ethers.formatEther(balance), \"ETH\");\n\n        //update prices\n        console.log(\"\\nUpdating prices...\");\n        await mockDogeFeed.updateAnswer(120000000);\n        await mockShibFeed.updateAnswer(1100000);\n        console.log(\"Prices updated: DOGE +20%, SHIB +10%\");\n\n        //timeb travel\n        console.log(\"\\nAdvancing time...\");\n        await ethers.provider.send(\"evm_increaseTime\", [3600]);\n        await ethers.provider.send(\"evm_mine\");\n\n        //settle bet\n        console.log(\"\\nSettling bet...\");\n        const settleTx = await memeBets.settleBet(0);\n        await settleTx.wait();\n\n        balance = await contractWithSigner.userBalances(user1.address);\n        console.log(\"Balance after settlement:\", ethers.formatEther(balance), \"ETH\");\n\n        //withdrawal\n        const withdrawAmount = ethers.parseEther(\"2\");\n        console.log(\"\\nWithdrawing\", ethers.formatEther(withdrawAmount), \"ETH\");\n        const withdrawTx = await contractWithSigner.connect(user1).withdraw(withdrawAmount);\n        await withdrawTx.wait();\n\n        balance = await contractWithSigner.userBalances(user1.address);\n        console.log(\"Final balance:\", ethers.formatEther(balance), \"ETH\");\n\n       \n\n    } catch (error) {\n        console.error(\"Error occurred:\", error);\n        process.exit(1);\n    }\n}\n\nmain()\n    .then(() => process.exit(0))\n    .catch((error) => {\n        console.error(error);\n        process.exit(1);\n    });",
+        "lines": 106,
+        "size": 4226,
+        "importance_score": 64.226,
+        "saved_to": "code_samples/scripts_deploy-and-test.js"
+      },
+      "scripts/generate-wallet.js": {
+        "snippet": "const { ethers } = require(\"ethers\"); //testign \n\nasync function main() {\n    const wallet = ethers.Wallet.createRandom();\n    console.log(\"New Wallet Generated\");\n    console.log(\"Address:\", wallet.address);\n    console.log(\"Private Key:\", wallet.privateKey);\n    console.log(\"\\nIMPORTANT: Save these credentials securely and never commit them to version control!\");\n}\n\nmain()\n    .then(() => process.exit(0))\n    .catch((error) => {\n        console.error(error);\n        process.exit(1);\n    });",
+        "lines": 16,
+        "size": 497,
+        "importance_score": 60.497,
+        "saved_to": "code_samples/scripts_generate-wallet.js"
+      },
+      "ignition/modules/Lock.js": {
+        "snippet": "// This setup uses Hardhat Ignition to manage smart contract deployments.\n// Learn more about it at https://hardhat.org/ignition\n\nconst { buildModule } = require(\"@nomicfoundation/hardhat-ignition/modules\");\n\nconst JAN_1ST_2030 = 1893456000;\nconst ONE_GWEI = 1_000_000_000n;\n\nmodule.exports = buildModule(\"LockModule\", (m) => {\n  const unlockTime = m.getParameter(\"unlockTime\", JAN_1ST_2030);\n  const lockedAmount = m.getParameter(\"lockedAmount\", ONE_GWEI);\n\n  const lock = m.contract(\"Lock\", [unlockTime], {\n    value: lockedAmount,\n  });\n\n  return { lock };\n});\n",
+        "lines": 19,
+        "size": 564,
+        "importance_score": 50.564,
+        "saved_to": "code_samples/ignition_modules_Lock.js"
+      },
+      "README.md": {
+        "snippet": "# MemeCoin Battles\n\nThis project is a decentralized blackjack game that is built on the Ethereum blockchain. The game is built using Solidity, Hardhat, and React. The game is deployed on the Scroll Sepolia testnet.\n\n```shell\nnpx hardhat help\nnpx hardhat test\nREPORT_GAS=true npx hardhat test\nnpx hardhat node\nnpx hardhat ignition deploy ./ignition/modules/Lock.js\n```\n\n",
+        "lines": 13,
+        "size": 369,
+        "importance_score": 50.369,
+        "saved_to": "code_samples/README.md"
+      }
+    }
+  },
+  "code_samples_dir": "code_samples",
+  "extracted_code_files": {
+    "frontend/src/index.js": {
+      "snippet": "import React from 'react'\nimport ReactDOM from 'react-dom/client'\nimport App from './App'\nimport './index.css'\n\nReactDOM.createRoot(document.getElementById('root')).render(\n  <React.StrictMode>\n    <App />\n  </React.StrictMode>,\n)",
+      "lines": 10,
+      "size": 230,
+      "importance_score": 300.23
+    },
+    "package.json": {
+      "snippet": "{\n  \"name\": \"hardhat-project\",\n  \"devDependencies\": {\n    \"@chainlink/contracts\": \"^0.8.0\",\n    \"@nomicfoundation/hardhat-chai-matchers\": \"^2.0.0\",\n    \"@nomicfoundation/hardhat-ethers\": \"^3.0.0\",\n    \"@nomicfoundation/hardhat-network-helpers\": \"^1.0.0\",\n    \"@nomicfoundation/hardhat-toolbox\": \"^4.0.0\",\n    \"@nomicfoundation/hardhat-verify\": \"^2.0.0\",\n    \"@typechain/ethers-v6\": \"^0.5.0\",\n    \"@typechain/hardhat\": \"^9.0.0\",\n    \"@types/mocha\": \"^10.0.1\",\n    \"autoprefixer\": \"^10.4.20\",\n    \"chai\": \"^4.2.0\",\n    \"dotenv\": \"^16.4.5\",\n    \"ethers\": \"^6.13.4\",\n    \"hardhat\": \"^2.22.16\",\n    \"hardhat-gas-reporter\": \"^1.0.8\",\n    \"postcss\": \"^8.4.49\",\n    \"solidity-coverage\": \"^0.8.1\",\n    \"tailwindcss\": \"^3.4.15\",\n    \"ts-node\": \"^10.9.1\",\n    \"typechain\": \"^8.3.0\",\n    \"typescript\": \"^5.0.4\"\n  },\n  \"dependencies\": {\n    \"@openzeppelin/contracts\": \"^5.1.0\",\n    \"chart.js\": \"^4.4.1\",\n    \"lightweight-charts\": \"^4.2.1\",\n    \"react-chartjs-2\": \"^5.2.0\",\n    \"react-hot-toast\": \"^2.4.1\",\n    \"recharts\": \"^2.13.3\"\n  }\n}\n",
+      "lines": 35,
+      "size": 1025,
+      "importance_score": 201.025
+    },
+    "frontend/package.json": {
+      "snippet": "{\n  \"name\": \"frontend\",\n  \"version\": \"0.1.0\",\n  \"private\": true,\n  \"dependencies\": {\n    \"@testing-library/jest-dom\": \"^5.17.0\",\n    \"@testing-library/react\": \"^13.4.0\",\n    \"@testing-library/user-event\": \"^13.5.0\",\n    \"ethers\": \"^6.13.4\",\n    \"lucide-react\": \"^0.294.0\",\n    \"react\": \"^18.3.1\",\n    \"react-dom\": \"^18.3.1\",\n    \"react-hot-toast\": \"^2.4.1\",\n    \"react-router-dom\": \"^6.28.0\",\n    \"react-scripts\": \"5.0.1\",\n    \"react-toastify\": \"^10.0.6\",\n    \"recharts\": \"^2.10.3\",\n    \"web-vitals\": \"^2.1.4\",\n    \"web3\": \"^4.15.0\"\n  },\n  \"scripts\": {\n    \"start\": \"react-scripts start\",\n    \"build\": \"react-scripts build\",\n    \"test\": \"react-scripts test\",\n    \"eject\": \"react-scripts eject\"\n  },\n  \"eslintConfig\": {\n    \"extends\": [\n      \"react-app\",\n      \"react-app/jest\"\n    ]\n  },\n  \"browserslist\": {\n    \"production\": [\n      \">0.2%\",\n      \"not dead\",\n      \"not op_mini all\"\n    ],\n    \"development\": [\n      \"last 1 chrome version\",\n      \"last 1 firefox version\",\n      \"last 1 safari version\"\n    ]\n  },\n  \"devDependencies\": {\n    \"autoprefixer\": \"^10.4.20\",\n    \"postcss\": \"^8.4.49\",\n    \"tailwindcss\": \"^3.4.15\"\n  }\n}\n",
+      "lines": 51,
+      "size": 1134,
+      "importance_score": 191.13400000000001
+    },
+    "hardhat.config.js": {
+      "snippet": "require(\"@nomicfoundation/hardhat-toolbox\");\nrequire('dotenv').config();\n\n/** @type import('hardhat/config').HardhatUserConfig */\nmodule.exports = {\n  solidity: {\n    version: \"0.8.20\",\n    settings: {\n      optimizer: {\n        enabled: true,\n        runs: 200\n      }\n    }\n  },\n  networks: {\n    hardhat: {\n      chainId: 31337\n    },\n    localhost: {\n      url: \"http://127.0.0.1:8545\",\n      chainId: 31337,\n    },\n    sepolia: {\n      url: process.env.SEPOLIA_RPC_URL,\n      accounts: [process.env.PRIVATE_KEY],\n      chainId: 11155111,\n    }\n  },\n  paths: {\n    sources: \"./contracts\",\n    tests: \"./test\",\n    cache: \"./cache\",\n    artifacts: \"./artifacts\"\n  }\n};",
+      "lines": 35,
+      "size": 671,
+      "importance_score": 170.671
+    },
+    "tailwind.config.js": {
+      "snippet": "/** @type {import('tailwindcss').Config} */\nmodule.exports = {\n  content: [],\n  theme: {\n    extend: {},\n  },\n  plugins: [],\n}\n\n",
+      "lines": 10,
+      "size": 128,
+      "importance_score": 170.128
+    },
+    "postcss.config.js": {
+      "snippet": "module.exports = {\n  plugins: {\n    tailwindcss: {},\n    autoprefixer: {},\n  },\n}\n",
+      "lines": 7,
+      "size": 82,
+      "importance_score": 170.082
+    },
+    "frontend/tailwind.config.js": {
+      "snippet": "/** @type {import('tailwindcss').Config} */\nexport default {\n    content: [\n      \"./index.html\",\n      \"./src/**/*.{js,ts,jsx,tsx}\",\n    ],\n    theme: {\n      extend: {\n        colors: {\n          // Dark theme colors\n          background: {\n            DEFAULT: '#1C2631',\n            dark: '#0F172A'\n          },\n          primary: {\n            DEFAULT: '#3B82F6',\n            dark: '#2563EB'\n          },\n          secondary: {\n            DEFAULT: '#232D3F',\n            dark: '#1E2632'\n          },\n          accent: {\n            DEFAULT: '#6366F1',\n            dark: '#4F46E5'\n          }\n        }\n      }\n    },\n    plugins: [],\n  }",
+      "lines": 31,
+      "size": 643,
+      "importance_score": 160.643
+    },
+    "frontend/postcss.config.js": {
+      "snippet": "module.exports = {\n    plugins: {\n      tailwindcss: {},\n      autoprefixer: {},\n    },\n  }",
+      "lines": 6,
+      "size": 91,
+      "importance_score": 160.091
+    },
+    "package-lock.json": {
+      "snippet": "{\n  \"name\": \"hardhat-project\",\n  \"lockfileVersion\": 3,\n  \"requires\": true,\n  \"packages\": {\n    \"\": {\n      \"name\": \"hardhat-project\",\n      \"dependencies\": {\n        \"@openzeppelin/contracts\": \"^5.1.0\",\n        \"chart.js\": \"^4.4.1\",\n        \"lightweight-charts\": \"^4.2.1\",\n        \"react-chartjs-2\": \"^5.2.0\",\n        \"react-hot-toast\": \"^2.4.1\",\n        \"recharts\": \"^2.13.3\"\n      },\n      \"devDependencies\": {\n        \"@chainlink/contracts\": \"^0.8.0\",\n        \"@nomicfoundation/hardhat-chai-matchers\": \"^2.0.0\",\n        \"@nomicfoundation/hardhat-ethers\": \"^3.0.0\",\n        \"@nomicfoundation/hardhat-network-helpers\": \"^1.0.0\",\n        \"@nomicfoundation/hardhat-toolbox\": \"^4.0.0\",\n        \"@nomicfoundation/hardhat-verify\": \"^2.0.0\",\n        \"@typechain/ethers-v6\": \"^0.5.0\",\n        \"@typechain/hardhat\": \"^9.0.0\",\n        \"@types/mocha\": \"^10.0.1\",\n        \"autoprefixer\": \"^10.4.20\",\n        \"chai\": \"^4.2.0\",\n        \"dotenv\": \"^16.4.5\",\n        \"ethers\": \"^6.13.4\",\n        \"hardhat\": \"^2.22.16\",\n        \"hardhat-gas-reporter\": \"^1.0.8\",\n        \"postcss\": \"^8.4.49\",\n        \"solidity-coverage\": \"^0.8.1\",\n        \"tailwindcss\": \"^3.4.15\",\n        \"ts-node\": \"^10.9.1\",\n        \"typechain\": \"^8.3.0\",\n        \"typescript\": \"^5.0.4\"\n      }\n    },\n    \"node_modules/@adraffy/ens-normalize\": {\n      \"version\": \"1.10.1\",\n      \"resolved\": \"https://registry.npmjs.org/@adraffy/ens-normalize/-/ens-normalize-1.10.1.tgz\",\n      \"integrity\": \"sha512-96Z2IP3mYmF1Xg2cDm8f1gWGf/HUVedQ3FMifV4kG/PQ4yEP51xDtRAEfhVNt5f/uzpNkZHwWQuUcu6D6K+Ekw==\",\n      \"dev\": true\n    },\n    \"node_modules/@alloc/quick-lru\": {\n      \"version\": \"5.2.0\",\n      \"resolved\": \"https://registry.npmjs.org/@alloc/quick-lru/-/quick-lru-5.2.0.tgz\",\n      \"integrity\": \"sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==\",\n      \"dev\": true,\n      \"engines\": {\n        \"node\": \">=10\"\n      },\n      \"funding\": {\n        \"url\": \"https://github.com/sponsors/sindresorhus\"\n      }\n    },\n    \"node_modules/@babel/runtime\": {\n      \"version\": \"7.26.0\",\n      \"resolved\": \"https://registry.npmjs.org/@babel/runtime/-/runtime-7.26.0.tgz\",\n      \"integrity\": \"sha512-FDSOghenHTiToteC/QRlv2q3DhPZ/oOXTBoirfWNx1Cx3TMVcGWQtMMmQcSvb/JjpNeGzx8Pq/b4fKEJuWm1sw==\",\n      \"dependencies\": {\n        \"regenerator-runtime\": \"^0.14.0\"\n      },\n      \"engines\": {\n        \"node\": \">=6.9.0\"\n      }\n    },\n    \"node_modules/@chainlink/contracts\": {\n      \"version\": \"0.8.0\",\n      \"resolved\": \"https://registry.npmjs.org/@chainlink/contracts/-/contracts-0.8.0.tgz\",\n      \"integrity\": \"sha512-nUv1Uxw5Mn92wgLs2bgPYmo8hpdQ3s9jB/lcbdU0LmNOVu0hbfmouVnqwRLa28Ll50q6GczUA+eO0ikNIKLZsA==\",\n      \"dev\": true,\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"@eth-optimism/contracts\": \"^0.5.21\",\n        \"@openzeppelin/contracts\": \"~4.3.3\",\n        \"@openzeppelin/contracts-upgradeable-4.7.3\": \"npm:@openzeppelin/contracts-upgradeable@v4.7.3\",\n        \"@openzeppelin/contracts-v0.7\": \"npm:@openzeppelin/contracts@v3.4.2\"\n      }\n    },\n    \"node_modules/@chainlink/contracts/node_modules/@eth-optimism/contracts\": {\n      \"version\": \"0.5.40\",\n      \"resolved\": \"https://registry.npmjs.org/@eth-optimism/contracts/-/contracts-0.5.40.tgz\",\n      \"integrity\": \"sha512-MrzV0nvsymfO/fursTB7m/KunkPsCndltVgfdHaT1Aj5Vi6R/doKIGGkOofHX+8B6VMZpuZosKCMQ5lQuqjt8w==\",\n      \"dev\": true,\n      \"dependencies\": {\n        \"@eth-optimism/core-utils\": \"0.12.0\",\n        \"@ethersproject/abstract-provider\": \"^5.7.0\",\n        \"@ethersproject/abstract-signer\": \"^5.7.0\"\n      },\n      \"peerDependencies\": {\n        \"ethers\": \"^5\"\n      }\n    },\n    \"node_modules/@chainlink/contracts/node_modules/@openzeppelin/contracts\": {\n      \"version\": \"4.3.3\",\n      \"resolved\": \"https://registry.npmjs.org/@openzeppelin/contracts/-/contracts-4.3.3.tgz\",\n      \"integrity\": \"sha512-tDBopO1c98Yk7Cv/PZlHqrvtVjlgK5R4J6jxLwoO7qxK4xqOiZG+zSkIvGFpPZ0ikc3QOED3plgdqjgNTnBc7g==\",\n      \"dev\": true,\n      \"license\": \"MIT\"\n    },\n    \"node_modules/@chainlink/contracts/node_modules/ethers\": {\n      \"version\": \"5.7.2\",\n      \"resolved\": \"https://registry.npmjs.org/ethers/-/ethers-5.7.2.tgz\",\n      \"integrity\": \"sha512-wswUsmWo1aOK8rR7DIKiWSw9DbLWe6x98Jrn8wcTflTVvaXhAMaB5zGAXy0GYQEQp9iO1iSHWVyARQm11zUtyg==\",\n      \"dev\": true,\n      \"funding\": [\n        {\n          \"type\": \"individual\",\n          \"url\": \"https://gitcoin.co/grants/13/ethersjs-complete-simple-and-tiny-2\"\n        },\n        {\n          \"type\": \"individual\",\n          \"url\": \"https://www.buymeacoffee.com/ricmoo\"\n        }\n      ],\n      \"peer\": true,\n      \"dependencies\": {\n        \"@ethersproject/abi\": \"5.7.0\",\n        \"@ethersproject/abstract-provider\": \"5.7.0\",\n        \"@ethersproject/abstract-signer\": \"5.7.0\",\n        \"@ethersproject/address\": \"5.7.0\",\n        \"@ethersproject/base64\": \"5.7.0\",\n        \"@ethersproject/basex\": \"5.7.0\",\n        \"@ethersproject/bignumber\": \"5.7.0\",\n        \"@ethersproject/bytes\": \"5.7.0\",\n        \"@ethersproject/constants\": \"5.7.0\",\n        \"@ethersproject/contracts\": \"5.7.0\",\n        \"@ethersproject/hash\": \"5.7.0\",\n        \"@ethersproject/hdnode\": \"5.7.0\",\n        \"@ethersproject/json-wallets\": \"5.7.0\",\n        \"@ethersproject/keccak256\": \"5.7.0\",\n        \"@ethersproject/logger\": \"5.7.0\",\n        \"@ethersproject/networks\": \"5.7.1\",\n        \"@ethersproject/pbkdf2\": \"5.7.0\",\n        \"@ethersproject/properties\": \"5.7.0\",\n        \"@ethersproject/providers\": \"5.7.2\",\n        \"@ethersproject/random\": \"5.7.0\",\n        \"@ethersproject/rlp\": \"5.7.0\",\n        \"@ethersproject/sha2\": \"5.7.0\",\n        \"@ethersproject/signing-key\": \"5.7.0\",\n        \"@ethersproject/solidity\": \"5.7.0\",\n        \"@ethersproject/strings\": \"5.7.0\",\n        \"@ethersproject/transactions\": \"5.7.0\",\n        \"@ethersproject/units\": \"5.7.0\",\n        \"@ethersproject/wallet\": \"5.7.0\",\n        \"@ethersproject/web\": \"5.7.1\",\n        \"@ethersproject/wordlists\": \"5.7.0\"\n      }\n    },\n    \"node_modules/@cspotcode/source-map-support\": {\n      \"version\": \"0.8.1\",\n      \"resolved\": \"https://registry.npmjs.org/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz\",\n      \"integrity\": \"sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==\",\n      \"dev\": true,\n      \"dependencies\": {\n        \"@jridgewell/trace-mapping\": \"0.3.9\"\n      },\n      \"engines\": {\n        \"node\": \">=12\"\n      }\n    },\n    \"node_modules/@eth-optimism/core-utils\": {\n      \"version\": \"0.12.0\",\n      \"resolved\": \"https://registry.npmjs.org/@eth-optimism/core-utils/-/core-utils-0.12.0.tgz\",\n      \"integrity\": \"sha512-qW+7LZYCz7i8dRa7SRlUKIo1VBU8lvN0HeXCxJR+z+xtMzMQpPds20XJNCMclszxYQHkXY00fOT6GvFw9ZL6nw==\",\n      \"dev\": true,\n      \"dependencies\": {\n        \"@ethersproject/abi\": \"^5.7.0\",\n        \"@ethersproject/abstract-provider\": \"^5.7.0\",\n        \"@ethersproject/address\": \"^5.7.0\",\n        \"@ethersproject/bignumber\": \"^5.7.0\",\n        \"@ethersproject/bytes\": \"^5.7.0\",\n        \"@ethersproject/constants\": \"^5.7.0\",\n        \"@ethersproject/contracts\": \"^5.7.0\",\n        \"@ethersproject/hash\": \"^5.7.0\",\n        \"@ethersproject/keccak256\": \"^5.7.0\",\n        \"@ethersproject/properties\": \"^5.7.0\",\n        \"@ethersproject/providers\": \"^5.7.0\",\n        \"@ethersproject/rlp\": \"^5.7.0\",\n        \"@ethersproject/transactions\": \"^5.7.0\",\n        \"@ethersproject/web\": \"^5.7.0\",\n        \"bufio\": \"^1.0.7\",\n        \"chai\": \"^4.3.4\"\n      }\n    },\n    \"node_modules/@ethereumjs/rlp\": {\n      \"version\": \"4.0.1\",\n      \"resolved\": \"https://registry.npmjs.org/@ethereumjs/rlp/-/rlp-4.0.1.tgz\",\n      \"integrity\": \"sha512-tqsQiBQDQdmPWE1xkkBq4rlSW5QZpLOUJ5RJh2/9fug+q9tnUhuZoVLk7s0scUIKTOzEtR72DFBXI4WiZcMpvw==\",\n      \"dev\": true,\n      \"bin\": {\n        \"rlp\": \"bin/rlp\"\n      },\n      \"engines\": {\n        \"node\": \">=14\"\n      }\n    },\n    \"node_modules/@ethereumjs/util\": {",
+      "lines": 8371,
+      "size": 310210,
+      "importance_score": 150
+    },
+    "frontend/src/utils/helper.js": {
+      "snippet": "import { ethers } from 'ethers';\n\nexport const shortenAddress = (address) => {\n  if (!address) return '';\n  return `${address.slice(0, 6)}...${address.slice(-4)}`;\n};\n\nexport const formatAmount = (amount, decimals = 4) => {\n  if (!amount) return '0';\n  return Number(amount).toFixed(decimals);\n};\n\nexport const formatEther = (wei) => {\n  if (!wei) return '0';\n  return ethers.utils.formatEther(wei);\n};\n\nexport const parseEther = (eth) => {\n  if (!eth) return '0';\n  return ethers.utils.parseEther(eth.toString());\n};\n\nexport const calculateTimeLeft = (deadline) => {\n  const difference = +new Date(deadline) - +new Date();\n  if (difference <= 0) return { minutes: '00', seconds: '00' };\n\n  const minutes = Math.floor((difference / 1000 / 60) % 60);\n  const seconds = Math.floor((difference / 1000) % 60);\n\n  return {\n    minutes: minutes < 10 ? `0${minutes}` : minutes,\n    seconds: seconds < 10 ? `0${seconds}` : seconds,\n  };\n};\n\nexport const calculatePriceChange = (oldPrice, newPrice) => {\n  if (!oldPrice || !newPrice) return '0';\n  const change = ((newPrice - oldPrice) / oldPrice) * 100;\n  return change.toFixed(2);\n};\n\nexport const formatVolume = (volume) => {\n  if (volume >= 1000000) {\n    return `$${(volume / 1000000).toFixed(2)}M`;\n  }\n  if (volume >= 1000) {\n    return `$${(volume / 1000).toFixed(2)}K`;\n  }\n  return `$${volume}`;\n};",
+      "lines": 50,
+      "size": 1349,
+      "importance_score": 141.349
+    },
+    "frontend/src/App.jsx": {
+      "snippet": "import React from 'react';\nimport { BrowserRouter as Router, Routes, Route } from 'react-router-dom';\nimport { Web3Provider } from './context/Web3Context';\nimport HomePage from './pages/HomePage';\nimport BettingPage from './pages/BettingPage';\nimport { Toaster } from 'react-hot-toast';\n\nfunction App() {\n  return (\n    <Web3Provider>\n      <Router>\n        <Routes>\n          <Route path=\"/\" element={<HomePage />} />\n          <Route path=\"/bet/:pair\" element={<BettingPage />} />\n        </Routes>\n        <Toaster\n          position=\"bottom-right\"\n          toastOptions={{\n            duration: 5000,\n            style: {\n              background: '#232D3F',\n              color: '#fff',\n            },\n          }}\n        />\n      </Router>\n    </Web3Provider>\n  );\n}\n\nexport default App;",
+      "lines": 31,
+      "size": 795,
+      "importance_score": 130.79500000000002
+    },
+    "scripts/deploy-and-test.js": {
+      "snippet": "const { ethers } = require(\"hardhat\");\n\nasync function main() {\n    try {\n        console.log(\"Starting deployment and test...\");\n\n        // Deploy BettingToken\n        console.log(\"Deploying BettingToken...\");\n        const BettingToken = await ethers.getContractFactory(\"BettingToken\");\n        const bettingToken = await BettingToken.deploy();\n        await bettingToken.waitForDeployment();\n        console.log(\"BettingToken deployed to:\", await bettingToken.getAddress());\n\n        // Deploy mock price feeds\n        console.log(\"Deploying Mock Price Feeds...\");\n        const MockV3Aggregator = await ethers.getContractFactory(\"MockV3Aggregator\");\n        const mockDogeFeed = await MockV3Aggregator.deploy(8, 100000000);\n        const mockShibFeed = await MockV3Aggregator.deploy(8, 1000000);\n        await mockDogeFeed.waitForDeployment();\n        await mockShibFeed.waitForDeployment();\n        console.log(\"Mock DOGE Feed deployed to:\", await mockDogeFeed.getAddress());\n        console.log(\"Mock SHIB Feed deployed to:\", await mockShibFeed.getAddress());\n\n        // Deploy MemeBets\n        console.log(\"Deploying MemeBets...\");\n        const MemeBets = await ethers.getContractFactory(\"MemeBets\");\n        const memeBets = await MemeBets.deploy(\n            await mockDogeFeed.getAddress(),\n            await mockShibFeed.getAddress(),\n            await bettingToken.getAddress()\n        );\n        await memeBets.waitForDeployment();\n        console.log(\"MemeBets deployed to:\", await memeBets.getAddress());\n\n        // Get signers\n        const [owner] = await ethers.getSigners();\n        const user1 = owner;\n        console.log(\"Using owner address:\", owner.address);\n        console.log(\"Using user1 address:\", user1.address);\n        \n        // Approve tokens for withdrawal\n        console.log(\"\\nApproving tokens for withdrawal...\");\n        await bettingToken.approve(await memeBets.getAddress(), ethers.parseEther(\"1000\"));\n\n        const contractWithSigner = memeBets.connect(user1);\n\n        //depo\n        console.log(\"\\nTesting deposit...\");\n        const depositAmount = ethers.parseEther(\"15\");\n        const depositTx = await contractWithSigner.deposit({ value: depositAmount });\n        await depositTx.wait();\n\n        let balance = await contractWithSigner.userBalances(user1.address);\n        console.log(\"Balance after deposit:\", ethers.formatEther(balance), \"ETH\");\n\n        //placing a bet\n        const betAmount = ethers.parseEther(\"10\");\n        console.log(\"\\nPlacing bet of\", ethers.formatEther(betAmount), \"ETH\");\n        const placeBetTx = await contractWithSigner.placeBet(true, betAmount);\n        await placeBetTx.wait();\n\n        balance = await contractWithSigner.userBalances(user1.address);\n        console.log(\"Balance after placing bet:\", ethers.formatEther(balance), \"ETH\");\n\n        //update prices\n        console.log(\"\\nUpdating prices...\");\n        await mockDogeFeed.updateAnswer(120000000);\n        await mockShibFeed.updateAnswer(1100000);\n        console.log(\"Prices updated: DOGE +20%, SHIB +10%\");\n\n        //timeb travel\n        console.log(\"\\nAdvancing time...\");\n        await ethers.provider.send(\"evm_increaseTime\", [3600]);\n        await ethers.provider.send(\"evm_mine\");\n\n        //settle bet\n        console.log(\"\\nSettling bet...\");\n        const settleTx = await memeBets.settleBet(0);\n        await settleTx.wait();\n\n        balance = await contractWithSigner.userBalances(user1.address);\n        console.log(\"Balance after settlement:\", ethers.formatEther(balance), \"ETH\");\n\n        //withdrawal\n        const withdrawAmount = ethers.parseEther(\"2\");\n        console.log(\"\\nWithdrawing\", ethers.formatEther(withdrawAmount), \"ETH\");\n        const withdrawTx = await contractWithSigner.connect(user1).withdraw(withdrawAmount);\n        await withdrawTx.wait();\n\n        balance = await contractWithSigner.userBalances(user1.address);\n        console.log(\"Final balance:\", ethers.formatEther(balance), \"ETH\");\n\n       \n\n    } catch (error) {\n        console.error(\"Error occurred:\", error);\n        process.exit(1);\n    }\n}\n\nmain()\n    .then(() => process.exit(0))\n    .catch((error) => {\n        console.error(error);\n        process.exit(1);\n    });",
+      "lines": 106,
+      "size": 4226,
+      "importance_score": 64.226
+    },
+    "scripts/generate-wallet.js": {
+      "snippet": "const { ethers } = require(\"ethers\"); //testign \n\nasync function main() {\n    const wallet = ethers.Wallet.createRandom();\n    console.log(\"New Wallet Generated\");\n    console.log(\"Address:\", wallet.address);\n    console.log(\"Private Key:\", wallet.privateKey);\n    console.log(\"\\nIMPORTANT: Save these credentials securely and never commit them to version control!\");\n}\n\nmain()\n    .then(() => process.exit(0))\n    .catch((error) => {\n        console.error(error);\n        process.exit(1);\n    });",
+      "lines": 16,
+      "size": 497,
+      "importance_score": 60.497
+    },
+    "ignition/modules/Lock.js": {
+      "snippet": "// This setup uses Hardhat Ignition to manage smart contract deployments.\n// Learn more about it at https://hardhat.org/ignition\n\nconst { buildModule } = require(\"@nomicfoundation/hardhat-ignition/modules\");\n\nconst JAN_1ST_2030 = 1893456000;\nconst ONE_GWEI = 1_000_000_000n;\n\nmodule.exports = buildModule(\"LockModule\", (m) => {\n  const unlockTime = m.getParameter(\"unlockTime\", JAN_1ST_2030);\n  const lockedAmount = m.getParameter(\"lockedAmount\", ONE_GWEI);\n\n  const lock = m.contract(\"Lock\", [unlockTime], {\n    value: lockedAmount,\n  });\n\n  return { lock };\n});\n",
+      "lines": 19,
+      "size": 564,
+      "importance_score": 50.564
+    },
+    "README.md": {
+      "snippet": "# MemeCoin Battles\n\nThis project is a decentralized blackjack game that is built on the Ethereum blockchain. The game is built using Solidity, Hardhat, and React. The game is deployed on the Scroll Sepolia testnet.\n\n```shell\nnpx hardhat help\nnpx hardhat test\nREPORT_GAS=true npx hardhat test\nnpx hardhat node\nnpx hardhat ignition deploy ./ignition/modules/Lock.js\n```\n\n",
+      "lines": 13,
+      "size": 369,
+      "importance_score": 50.369
+    }
+  }
+}

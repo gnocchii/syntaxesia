@@ -9,7 +9,8 @@ dist/
 .env
 .env.local
 .env*.local
-
+.venv/
+venv/
 # OS files
 .DS_Store
 *.log

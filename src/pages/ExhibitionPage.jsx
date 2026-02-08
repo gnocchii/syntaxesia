@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { artworks } from '@/lib/mockData'
 import { useGeneratedArt } from '@/lib/ArtContext'
 import FloorIndicator from '@/components/FloorIndicator'
+import TipModal from '@/components/TipModal'
 
 const FLOOR_IDS = ['floor-2', 'floor-1', 'floor-0']
 
@@ -257,7 +258,8 @@ export default function ExhibitionPage() {
   const location = useLocation()
   const containerRef = useRef(null)
   const [activeFloor, setActiveFloor] = useState('floor-1')
-  const { images: generatedImages, generating } = useGeneratedArt()
+  const [tipOpen, setTipOpen] = useState(false)
+  const { images: generatedImages } = useGeneratedArt()
 
   // Track which floor is visible via scroll position
   const handleScroll = useCallback(() => {
@@ -310,6 +312,9 @@ export default function ExhibitionPage() {
   return (
     <div className="w-full h-full relative bg-[#f5f0e8]">
       <FloorIndicator activeFloor={activeFloor} onFloorClick={scrollToFloor} />
+
+      {/* Solana tip modal */}
+      <TipModal isOpen={tipOpen} onClose={() => setTipOpen(false)} />
 
       <div ref={containerRef} className="snap-container-no-scroll">
         {FLOOR_IDS.map((id) => (
