@@ -41,3 +41,19 @@
   box-shadow: 0 18px 70px rgba(0, 0, 0, 0.22);
   backdrop-filter: blur(12px);
 }
+
+.sx-brush-loader {
+  animation: sx-brush-float 3.2s ease-in-out infinite;
+}
+
+@keyframes sx-brush-float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

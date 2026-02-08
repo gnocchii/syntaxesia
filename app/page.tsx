@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import TextType from "./TextType";
 
 export default function SyntaxesiaLobby() {
   const [code, setCode] = useState("");
   const [status, setStatus] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [promptUsed, setPromptUsed] = useState("");
+  const router = useRouter();
 
   return (
     <main
@@ -120,36 +120,17 @@ export default function SyntaxesiaLobby() {
           />
           <button
             className="mx-auto inline-flex items-center justify-center rounded-full bg-[rgb(var(--sx-ink))] px-6 py-3 text-sm font-medium text-[rgb(var(--sx-bg))] transition hover:-translate-y-0.5 hover:shadow-[0_18px_45px_rgba(28,28,28,0.25)]"
-            onClick={async () => {
+            onClick={() => {
               if (!code.trim()) {
                 setStatus("Paste some code first.");
                 return;
               }
-              try {
-                setStatus("Generating image...");
-                setImageUrl("");
-                setPromptUsed("");
-
-                const res = await fetch("/api/generate", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ code, language: "JavaScript", chaos: 5 }),
-                });
-
-                const data = await res.json();
-
-                if (!res.ok) {
-                  setStatus(`❌ ${data.error || "Request failed"}`);
-                  return;
-                }
-
-                setImageUrl(data.imageDataUrl);
-                setPromptUsed(data.promptUsed);
-                setStatus("✅ Image generated!");
-              } catch (error) {
-                console.error(error);
-                setStatus("❌ Something went wrong. Check console.");
-              }
+              setStatus("");
+              sessionStorage.setItem(
+                "sx_job",
+                JSON.stringify({ code, language: "JavaScript", chaos: 5 })
+              );
+              router.push("/generating");
             }}
           >
             Generate Art
@@ -158,19 +139,6 @@ export default function SyntaxesiaLobby() {
             <p className="text-center text-xs text-[rgba(28,28,28,0.65)]">
               {status}
             </p>
-          )}
-          {imageUrl && (
-            <img
-              src={imageUrl}
-              alt="Generated art"
-              className="mx-auto mt-2 w-full max-w-[520px] rounded-3xl border border-[rgba(28,28,28,0.15)]"
-            />
-          )}
-          {promptUsed && (
-            <details className="mx-auto w-full max-w-[520px] text-left text-xs text-[rgba(28,28,28,0.7)]">
-              <summary className="cursor-pointer">Prompt used</summary>
-              <pre className="whitespace-pre-wrap">{promptUsed}</pre>
-            </details>
           )}
         </section>
       </div>
