@@ -7,8 +7,149 @@ import FloorIndicator from '@/components/FloorIndicator'
 const FLOOR_IDS = ['floor-2', 'floor-1', 'floor-0']
 
 function FloorContent({ navigate, currentFloor }) {
+  const [prompt, setPrompt] = useState('')
+  const [count] = useState(1)
+  const [status, setStatus] = useState('')
+  const [results, setResults] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col relative">
+      {/* Curator prompt wrapper (Floor 2) */}
+      <div className="absolute inset-8 z-20 rounded-[32px] border border-[#1a1a1a]/10 bg-white/90 p-8 shadow-[0_25px_70px_rgba(0,0,0,0.15)] backdrop-blur-sm">
+        <div className="flex h-full flex-col">
+          <div className="flex items-start justify-between gap-6">
+            <div>
+              <h2 className="text-sm uppercase tracking-[0.3em] text-[#1a1a1a]/50">
+          Curated by Women
+              </h2>
+              <p className="mt-2 max-w-md text-xs text-[#1a1a1a]/60">
+                Describe the kind of art you want to see. We’ll surface women artists
+                from The Met with public-domain images.
+              </p>
+            </div>
+            <div className="text-right text-[10px] uppercase tracking-[0.3em] text-[#1a1a1a]/40">
+              Floor 2
+            </div>
+          </div>
+
+          <div className="mt-6 grid flex-1 grid-cols-[minmax(260px,360px)_1fr] gap-6">
+            <div className="flex flex-col">
+              <textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Example: sweeping landscape paintings with open skies and natural light"
+                className="w-full rounded-2xl border border-[#1a1a1a]/10 bg-white/90 p-4 text-xs text-[#1a1a1a]/80 shadow-inner outline-none focus:border-[#1a1a1a]/30"
+                rows={6}
+              />
+              <div className="mt-4 flex items-center gap-3">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a]/45">
+                  1 result
+                </span>
+                <button
+                  className="ml-auto rounded-full bg-[#1a1a1a] px-4 py-2 text-[11px] uppercase tracking-[0.2em] text-white transition hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(0,0,0,0.25)]"
+                  onClick={async () => {
+                    if (!prompt.trim()) {
+                      setStatus('Describe the art you want first.')
+                      return
+                    }
+                    try {
+                      setIsLoading(true)
+                      setStatus('Searching The Met...')
+                      setResults([])
+                      const res = await fetch('/api/female-artists', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt, count }),
+                      })
+                      const data = await res.json()
+                      if (!res.ok) {
+                        setStatus(data.error || 'Request failed.')
+                        setIsLoading(false)
+                        return
+                      }
+                      const nextResults = data.results || []
+                      setResults(nextResults)
+                      setStatus(nextResults.length ? 'Curated results ready.' : 'No matches yet — try a broader prompt.')
+                    } catch (err) {
+                      console.error(err)
+                      setStatus('Something went wrong. Check console.')
+                    } finally {
+                      setIsLoading(false)
+                    }
+                  }}
+                >
+                  Curate
+                </button>
+              </div>
+              {status && (
+                <p className="mt-3 text-[11px] text-[#1a1a1a]/55">{status}</p>
+              )}
+            </div>
+
+            <div className="min-h-0">
+              <div className="grid max-h-[70vh] grid-cols-1 gap-4 overflow-auto pr-1">
+                {results.map((artist, idx) => (
+                  <div
+                    key={`${artist.artist}-${idx}`}
+                    className="rounded-2xl border border-[#1a1a1a]/10 bg-white/95 p-3 shadow-[0_8px_20px_rgba(0,0,0,0.08)]"
+                  >
+                    <div className="flex gap-3">
+                      <div className="h-28 w-28 shrink-0 overflow-hidden rounded-xl border border-[#1a1a1a]/10 bg-[#f2eee7]">
+                        {artist.image_url ? (
+                          <img
+                            src={artist.image_url}
+                            alt={`${artist.title} by ${artist.artist}`}
+                            className="h-full w-full object-cover"
+                            draggable={false}
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-[10px] text-[#1a1a1a]/40">
+                            {isLoading ? 'Loading…' : 'No image'}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-xs font-semibold text-[#1a1a1a]">{artist.title}</p>
+                        <p className="text-[11px] text-[#1a1a1a]/70">
+                          {artist.artist}
+                        </p>
+                        <p className="mt-1 text-[11px] text-[#1a1a1a]/60">
+                          {artist.object_date}
+                        </p>
+                      </div>
+                    </div>
+                    {artist.medium && (
+                      <p className="mt-2 text-[11px] text-[#1a1a1a]/60">
+                        {artist.medium}
+                      </p>
+                    )}
+                    <div className="mt-2 text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a]/45">
+                      {artist.culture || artist.period || artist.classification || 'Met Collection'}
+                    </div>
+                    {artist.department && (
+                      <p className="mt-1 text-[10px] text-[#1a1a1a]/45">
+                        {artist.department}
+                      </p>
+                    )}
+                  {artist.object_url && (
+                    <a
+                      href={artist.object_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-2 inline-flex text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a]/55 underline decoration-[#1a1a1a]/20 underline-offset-4"
+                    >
+                      View on The Met
+                    </a>
+                  )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <header className="shrink-0 text-center pt-8 pb-4">
         <h1
           className="text-lg tracking-[0.35em] uppercase text-[#1a1a1a]/50"
@@ -21,31 +162,7 @@ function FloorContent({ navigate, currentFloor }) {
         </p>
       </header>
 
-      <main className="flex-1 flex items-center justify-center px-12">
-        <div className="grid grid-cols-3 gap-10 max-w-5xl">
-          {artworks.map((artwork, i) => (
-            <motion.div
-              key={artwork.id}
-              className="cursor-pointer"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.6, ease: 'easeOut' }}
-              whileHover={{ scale: 1.05, y: -4 }}
-              onClick={() => navigate(`/artwork/${artwork.id}?from=${currentFloor}`)}
-            >
-              <img
-                src={artwork.image}
-                alt={artwork.placard.title}
-                className="w-full h-auto drop-shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition-[filter] duration-300 hover:drop-shadow-[0_12px_32px_rgba(0,0,0,0.3)]"
-                draggable={false}
-              />
-              <p className="text-center mt-3 text-sm italic text-[#1a1a1a]/40">
-                {artwork.placard.title}
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      </main>
+      <main className="flex-1" />
     </div>
   )
 }

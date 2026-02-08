@@ -2,6 +2,8 @@ import os
 import re
 import math
 import random
+import json
+import asyncio
 from typing import AsyncIterator, Optional
 
 import httpx
@@ -19,6 +21,7 @@ DEFAULT_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "Xb7hH8MSUJpSbSDYk0k2").stri
 DEFAULT_MODEL_ID = os.getenv("ELEVENLABS_MODEL_ID", "eleven_multilingual_v2").strip()
 DEFAULT_OUTPUT_FORMAT = os.getenv("ELEVENLABS_OUTPUT_FORMAT", "mp3_44100_128").strip()
 DEFAULT_STREAMING_LATENCY = os.getenv("ELEVENLABS_STREAMING_LATENCY", "2").strip()
+GEMINI_TEXT_MODEL = os.getenv("GEMINI_TEXT_MODEL", "gemini-1.5-flash-002").strip()
 
 # Support multiple Gemini API keys for parallel generation
 _gemini_keys = []
@@ -413,7 +416,7 @@ CRITICAL: NO text, letters, numbers, symbols. NO faces or figures. Strictly abst
 The artwork fills 100% of the image. No borders. No margins. Edge to edge."""
 
 
-async def generate_image_with_imagen(prompt: str) -> Optional[str]:
+async def generate_image_with_imagen(prompt: str) -> tuple[Optional[str], Optional[str]]:
     global _gemini_key_index
     if not _gemini_keys:
         raise HTTPException(status_code=500, detail="Missing GEMINI_API_KEY")
@@ -435,24 +438,94 @@ async def generate_image_with_imagen(prompt: str) -> Optional[str]:
     }
 
     timeout = httpx.Timeout(60.0, connect=10.0)
-    async with httpx.AsyncClient(timeout=timeout) as client:
-        response = await client.post(url, headers=headers, json=body)
+    try:
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            response = await client.post(url, headers=headers, json=body)
+    except Exception as exc:
+        print(f"[generate] Imagen request failed: {exc}")
+        return None, f"Imagen request failed: {exc}"
 
     if response.status_code >= 400:
         print(f"[generate] Imagen API error {response.status_code}: {response.text[:200]}")
-        return None
+        return None, f"Imagen API error {response.status_code}: {response.text[:200]}"
 
     data = response.json()
     predictions = data.get("predictions", [])
     if not predictions:
+        print("[generate] Imagen returned no predictions")
+        return None, "Imagen returned no predictions"
+
+    return predictions[0].get("bytesBase64Encoded"), None
+
+
+async def generate_text_with_gemini(prompt: str, temperature: float = 0.7) -> Optional[str]:
+    global _gemini_key_index
+    if not _gemini_keys:
+        raise HTTPException(status_code=500, detail="Missing GEMINI_API_KEY")
+
+    key = _gemini_keys[_gemini_key_index % len(_gemini_keys)]
+    _gemini_key_index += 1
+
+    model = GEMINI_TEXT_MODEL or "gemini-1.5-flash-002"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+    headers = {
+        "x-goog-api-key": key,
+        "Content-Type": "application/json",
+    }
+    body = {
+        "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+        "generationConfig": {
+            "temperature": temperature,
+            "maxOutputTokens": 900,
+        },
+    }
+
+    timeout = httpx.Timeout(45.0, connect=10.0)
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        response = await client.post(url, headers=headers, json=body)
+
+    if response.status_code >= 400:
+        print(f"[gemini] Text API error {response.status_code}: {response.text[:200]}")
         return None
 
-    return predictions[0].get("bytesBase64Encoded")
+    data = response.json()
+    candidates = data.get("candidates", [])
+    if not candidates:
+        return None
+
+    content = candidates[0].get("content", {})
+    parts = content.get("parts", [])
+    for part in parts:
+        text = part.get("text")
+        if text:
+            return text
+    return None
+
+
+def extract_json_payload(text: str) -> Optional[dict]:
+    if not text:
+        return None
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    match = re.search(r"\{[\s\S]*\}", text)
+    if not match:
+        return None
+    try:
+        return json.loads(match.group(0))
+    except json.JSONDecodeError:
+        return None
 
 
 class GenerateRequest(BaseModel):
     code: str = Field(..., min_length=1)
     language: Optional[str] = None
+
+
+class FemaleArtistRequest(BaseModel):
+    prompt: str = Field(..., min_length=1, max_length=500)
+    count: int = Field(3, ge=1, le=6)
 
 
 @app.post("/api/generate")
@@ -468,11 +541,11 @@ async def generate_art(payload: GenerateRequest):
     prompt = random.choice([generate_dalle_prompt, generate_gallery_prompt])(metrics)
     print(f"[generate] Prompt generated ({len(prompt)} chars), calling Imagen 4...")
 
-    b64 = await generate_image_with_imagen(prompt)
+    b64, error_detail = await generate_image_with_imagen(prompt)
 
     if not b64:
         return JSONResponse(
-            {"error": "Image generation failed", "prompt_used": prompt},
+            {"error": "Image generation failed", "prompt_used": prompt, "details": error_detail},
             status_code=500,
         )
 
@@ -482,3 +555,149 @@ async def generate_art(payload: GenerateRequest):
         "prompt_used": prompt,
         "metrics": metrics,
     }
+
+
+@app.post("/api/female-artists")
+async def recommend_female_artists(payload: FemaleArtistRequest):
+    user_prompt = payload.prompt.strip()
+    count = payload.count
+    search_url = "https://collectionapi.metmuseum.org/public/collection/v1/search"
+    params = {
+        "q": user_prompt,
+        "hasImages": "true",
+        "isPublicDomain": "true",
+    }
+
+    timeout = httpx.Timeout(20.0, connect=10.0)
+    headers = {
+        "User-Agent": "Syntaxesia/1.0 (local dev)",
+        "Accept": "application/json",
+    }
+
+    async def fetch_json_with_retries(url: str, params: Optional[dict] = None, retries: int = 3):
+        last_error = None
+        for attempt in range(1, retries + 1):
+            try:
+                async with httpx.AsyncClient(timeout=timeout, headers=headers) as client:
+                    response = await client.get(url, params=params)
+                content_type = response.headers.get("content-type", "")
+                if response.status_code >= 400:
+                    last_error = f"status {response.status_code}"
+                elif "application/json" not in content_type.lower():
+                    last_error = f"non-json response ({content_type})"
+                else:
+                    return response.json(), None
+            except Exception as exc:
+                last_error = str(exc)
+
+            await asyncio.sleep(0.6 * attempt)
+        return None, last_error
+
+    search_data, search_error = await fetch_json_with_retries(search_url, params=params, retries=3)
+    if not search_data:
+        return JSONResponse(
+            {"error": "Met search failed", "details": search_error or "Unknown error"},
+            status_code=500,
+        )
+    object_ids = search_data.get("objectIDs", []) or []
+    if not object_ids:
+        return {"results": []}
+
+    raw_terms = [w.strip().lower() for w in re.split(r"[\\s,;]+", user_prompt) if len(w.strip()) > 2]
+    synonym_map = {
+        "landscape": ["landscape", "scenery", "view", "vista", "countryside"],
+        "portrait": ["portrait", "portraiture", "self-portrait"],
+        "still": ["still life", "still-life"],
+        "seascape": ["seascape", "marine", "sea view"],
+        "cityscape": ["cityscape", "city view", "urban view"],
+        "abstract": ["abstract", "abstraction"],
+    }
+    keywords = []
+    for term in raw_terms:
+        if term in synonym_map:
+            keywords.extend(synonym_map[term])
+        else:
+            keywords.append(term)
+    keywords = [k for k in keywords if k]
+    results = []
+    skipped_for_keywords = 0
+    max_scan = min(len(object_ids), 800)
+    for object_id in object_ids[:max_scan]:
+        if len(results) >= count:
+            break
+
+        object_url = f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{object_id}"
+        obj, obj_error = await fetch_json_with_retries(object_url, retries=2)
+        if not obj:
+            continue
+        artist_gender = (obj.get("artistGender") or "").lower()
+        if "female" not in artist_gender:
+            continue
+
+        if keywords:
+            haystack = " ".join(
+                [
+                    str(obj.get("title") or ""),
+                    str(obj.get("medium") or ""),
+                    str(obj.get("objectName") or ""),
+                    str(obj.get("classification") or ""),
+                    str(obj.get("department") or ""),
+                    str(obj.get("culture") or ""),
+                ]
+            ).lower()
+            tag_terms = " ".join([t.get("term", "") for t in (obj.get("tags") or [])]).lower()
+            combined = f"{haystack} {tag_terms}"
+            if not any(k in combined for k in keywords):
+                skipped_for_keywords += 1
+                continue
+
+        image_url = obj.get("primaryImageSmall") or obj.get("primaryImage")
+        if not image_url:
+            continue
+
+        results.append({
+            "artist": obj.get("artistDisplayName") or "Unknown artist",
+            "title": obj.get("title") or "Untitled",
+            "object_date": obj.get("objectDate"),
+            "medium": obj.get("medium"),
+            "department": obj.get("department"),
+            "culture": obj.get("culture"),
+            "period": obj.get("period") or obj.get("dynasty") or obj.get("reign"),
+            "classification": obj.get("classification"),
+            "image_url": image_url,
+            "object_url": obj.get("objectURL"),
+            "credit_line": obj.get("creditLine"),
+            "source": "The Met Open Access",
+        })
+
+    if not results and keywords:
+        results = []
+        for object_id in object_ids[:max_scan]:
+            if len(results) >= count:
+                break
+            object_url = f"https://collectionapi.metmuseum.org/public/collection/v1/objects/{object_id}"
+            obj, obj_error = await fetch_json_with_retries(object_url, retries=2)
+            if not obj:
+                continue
+            artist_gender = (obj.get("artistGender") or "").lower()
+            if "female" not in artist_gender:
+                continue
+            image_url = obj.get("primaryImageSmall") or obj.get("primaryImage")
+            if not image_url:
+                continue
+            results.append({
+                "artist": obj.get("artistDisplayName") or "Unknown artist",
+                "title": obj.get("title") or "Untitled",
+                "object_date": obj.get("objectDate"),
+                "medium": obj.get("medium"),
+                "department": obj.get("department"),
+                "culture": obj.get("culture"),
+                "period": obj.get("period") or obj.get("dynasty") or obj.get("reign"),
+                "classification": obj.get("classification"),
+                "image_url": image_url,
+                "object_url": obj.get("objectURL"),
+                "credit_line": obj.get("creditLine"),
+                "source": "The Met Open Access",
+            })
+
+    return {"results": results, "notes": {"keyword_filter_applied": bool(keywords), "skipped_for_keywords": skipped_for_keywords}}
