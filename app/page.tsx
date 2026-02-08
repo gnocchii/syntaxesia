@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import TextType from "./TextType";
+import LightRays from "./LightRays";
 
 export default function SyntaxesiaLobby() {
   const [code, setCode] = useState("");
@@ -38,6 +39,27 @@ export default function SyntaxesiaLobby() {
           zIndex: 1,
         }}
       />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 bottom-0 mx-auto w-full max-w-5xl"
+        style={{ zIndex: 3 }}
+      >
+        <LightRays
+          raysOrigin="top-center"
+          raysColor="#ffffff"
+          raysSpeed={1}
+          lightSpread={0.5}
+          rayLength={3}
+          followMouse={true}
+          mouseInfluence={0.1}
+          noiseAmount={0}
+          distortion={0}
+          className="custom-rays"
+          pulsating={false}
+          fadeDistance={1}
+          saturation={1}
+        />
+      </div>
       <div
         aria-hidden
         className="pointer-events-none absolute inset-y-0 left-0 w-[18vw] max-w-[220px]"
