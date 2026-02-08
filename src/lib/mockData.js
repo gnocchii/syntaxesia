@@ -219,4 +219,165 @@ export default CommentatorOrb;`,
       ],
     },
   },
+  {
+    id: 7,
+    image: '/frame.png',
+    code: `fn main() {
+    let mut v: Vec<Box<dyn Shape>> = Vec::new();
+    v.push(Box::new(Circle { radius: 5.0 }));
+    v.push(Box::new(Rect { w: 3.0, h: 4.0 }));
+
+    for shape in &v {
+        match shape.kind() {
+            ShapeKind::Round => println!("area: {:.2}", shape.area()),
+            ShapeKind::Angular => {
+                let p = shape.perimeter();
+                if p > 10.0 {
+                    println!("large: {:.2}", p);
+                } else {
+                    println!("small: {:.2}", p);
+                }
+            }
+        }
+    }
+
+    let total: f64 = v.iter().map(|s| s.area()).sum();
+    let avg = total / v.len() as f64;
+    println!("avg area: {avg:.2}");
+}`,
+    language: 'rust',
+    placard: {
+      title: 'Rust & Geometry',
+      filename: 'shapes.rs',
+      artist: 'Unknown Folk Artist',
+      medium: 'Oxidized copper relief on slate',
+      year: '1941',
+      description: 'Pattern matching rendered in corroded metal — each branch a separate oxidation state. The compiler\'s certainty becomes the artist\'s constraint: every possibility accounted for, no edge left unfinished.',
+      details: [
+        { label: 'Origin', value: 'Berlin, Germany' },
+        { label: 'Dimensions', value: '38 × 38 cm' },
+      ],
+    },
+  },
+  {
+    id: 8,
+    image: '/frame.png',
+    code: `func fanOut(jobs <-chan int, workers int) <-chan string {
+    results := make(chan string, workers)
+    var wg sync.WaitGroup
+
+    for i := 0; i < workers; i++ {
+        wg.Add(1)
+        go func(id int) {
+            defer wg.Done()
+            for job := range jobs {
+                time.Sleep(time.Millisecond * time.Duration(rand.Intn(100)))
+                results <- fmt.Sprintf("worker %d: processed %d", id, job)
+            }
+        }(i)
+    }
+
+    go func() {
+        wg.Wait()
+        close(results)
+    }()
+
+    return results
+}`,
+    language: 'go',
+    placard: {
+      title: 'Concurrent Voices',
+      filename: 'fanout.go',
+      artist: 'Unknown Folk Artist',
+      medium: 'Woven thread on perforated board',
+      year: '1944',
+      description: 'Parallel threads converge on a single channel. The goroutines — invisible workers — leave traces in colored thread that cross and tangle, a textile map of concurrency made tangible.',
+      details: [
+        { label: 'Origin', value: 'Kyoto, Japan' },
+        { label: 'Dimensions', value: '50 × 50 cm' },
+      ],
+    },
+  },
+  {
+    id: 9,
+    image: '/frame.png',
+    code: `typedef struct Node {
+    int data;
+    struct Node *left;
+    struct Node *right;
+} Node;
+
+Node *insert(Node *root, int val) {
+    if (root == NULL) {
+        Node *n = malloc(sizeof(Node));
+        n->data = val;
+        n->left = n->right = NULL;
+        return n;
+    }
+    if (val < root->data)
+        root->left = insert(root->left, val);
+    else if (val > root->data)
+        root->right = insert(root->right, val);
+    return root;
+}
+
+void inorder(Node *root, void (*visit)(int)) {
+    if (!root) return;
+    inorder(root->left, visit);
+    visit(root->data);
+    inorder(root->right, visit);
+}`,
+    language: 'c',
+    placard: {
+      title: 'Memory Palace',
+      filename: 'bst.c',
+      artist: 'Unknown Folk Artist',
+      medium: 'Burnt wood pyrography on birch panel',
+      year: '1938',
+      description: 'Pointers trace invisible lines between allocated blocks. Each node a room, each branch a corridor — the binary tree as architectural blueprint, memory as physical space one can walk through.',
+      details: [
+        { label: 'Origin', value: 'Helsinki, Finland' },
+        { label: 'Condition', value: 'Excellent' },
+      ],
+    },
+  },
+  {
+    id: 10,
+    image: '/frame.png',
+    code: `interface EventBus<T extends Record<string, unknown>> {
+  on<K extends keyof T>(event: K, handler: (payload: T[K]) => void): () => void;
+  emit<K extends keyof T>(event: K, payload: T[K]): void;
+}
+
+function createBus<T extends Record<string, unknown>>(): EventBus<T> {
+  const listeners = new Map<keyof T, Set<Function>>();
+
+  return {
+    on(event, handler) {
+      if (!listeners.has(event)) listeners.set(event, new Set());
+      listeners.get(event)!.add(handler);
+      return () => listeners.get(event)?.delete(handler);
+    },
+    emit(event, payload) {
+      for (const fn of listeners.get(event) ?? []) {
+        try { fn(payload); }
+        catch (e) { console.error(e); }
+      }
+    },
+  };
+}`,
+    language: 'typescript',
+    placard: {
+      title: 'Signal & Noise',
+      filename: 'event_bus.ts',
+      artist: 'Unknown Folk Artist',
+      medium: 'Ink and gold leaf on vellum',
+      year: '1939',
+      description: 'Type parameters as calligraphic constraints — each generic boundary a rule the ink must obey. Events fire into the void; handlers catch what they can. The rest is silence.',
+      details: [
+        { label: 'Origin', value: 'Vienna, Austria' },
+        { label: 'Exhibition History', value: 'Documenta IX, 1992' },
+      ],
+    },
+  },
 ]

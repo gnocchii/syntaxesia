@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { artworks } from '@/lib/mockData'
+import { useGeneratedArt } from '@/lib/ArtContext'
 import FloorIndicator from '@/components/FloorIndicator'
 
 const FLOOR_IDS = ['floor-2', 'floor-1', 'floor-0']
@@ -50,49 +51,8 @@ function FloorContent({ navigate, currentFloor }) {
   )
 }
 
-// Renders a code snippet as a square art piece
-function CodeArt({ code, language, size = 133 }) {
-  // Scale font size based on code length and frame size
-  const lines = code.split('\n')
-  const fontSize = Math.max(2, Math.min(5, size / (lines.length * 2.2)))
-
-  return (
-    <div
-      style={{
-        width: size,
-        height: size,
-        background: '#0d1117',
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: size * 0.06,
-      }}
-    >
-      <pre
-        style={{
-          fontFamily: 'JetBrains Mono, monospace',
-          fontSize: `${fontSize}px`,
-          lineHeight: 1.4,
-          color: language === 'python' ? '#a5d6ff' : '#7ee787',
-          whiteSpace: 'pre',
-          overflow: 'hidden',
-          width: '100%',
-          height: '100%',
-          margin: 0,
-          opacity: 0.9,
-        }}
-      >
-        {code}
-      </pre>
-    </div>
-  )
-}
-
 // Floor 1 (Level 1) with background image and wall-mounted frames
-function Floor1Content({ navigate, currentFloor }) {
-  // Adjust these positions as needed
-  // Safe area: right 0-59.4%, top 2.9-52.8% (avoids left gray/pink area)
+function Floor1Content({ navigate, currentFloor, generatedImages }) {
   const framePositions = [
     { top: '17%', right: '40%', width: 133, rotation: -1 },
     { top: '35%', right: '40%', width: 135, rotation: 0.5 },
@@ -114,11 +74,7 @@ function Floor1Content({ navigate, currentFloor }) {
       <div className="absolute inset-0">
         {artworks.slice(0, framePositions.length).map((artwork, i) => {
           const pos = framePositions[i]
-          // frame.png is 665x545, so aspect ratio ~1.22:1
-          const frameWidth = pos.width
-          const frameHeight = frameWidth / (665 / 545)
-          // Inset for the art inside the frame border
-          const inset = frameWidth * 0.08
+          const imageUrl = generatedImages[artwork.id]
 
           return (
             <div
@@ -127,42 +83,39 @@ function Floor1Content({ navigate, currentFloor }) {
               style={{
                 top: pos.top,
                 right: pos.right,
-                width: `${frameWidth}px`,
+                width: `${pos.width}px`,
                 transform: `rotate(${pos.rotation}deg)`,
               }}
               onClick={() => navigate(`/artwork/${artwork.id}?from=${currentFloor}`)}
             >
-              {/* Container for frame + art */}
-              <div className="relative" style={{ width: frameWidth, height: frameHeight }}>
-                {/* Code art behind the frame */}
-                <div
-                  className="absolute overflow-hidden"
-                  style={{
-                    top: inset,
-                    left: inset,
-                    right: inset,
-                    bottom: inset,
-                  }}
-                >
-                  <CodeArt
-                    code={artwork.code}
-                    language={artwork.language}
-                    size={frameWidth - inset * 2}
+              {/* Generated art image (square) */}
+              <div
+                className="drop-shadow-[0_4px_16px_rgba(0,0,0,0.25)]"
+                style={{ width: pos.width, height: pos.width }}
+              >
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={artwork.placard.title}
+                    className="w-full h-full object-cover"
+                    draggable={false}
                   />
-                </div>
-                {/* Transparent frame overlay */}
-                <img
-                  src={artwork.image}
-                  alt={artwork.placard.title}
-                  className="absolute inset-0 w-full h-full drop-shadow-[0_4px_16px_rgba(0,0,0,0.25)]"
-                  draggable={false}
-                  style={{ pointerEvents: 'none' }}
-                />
+                ) : (
+                  <div
+                    className="w-full h-full flex items-center justify-center"
+                    style={{ background: '#1a1a1a' }}
+                  >
+                    <motion.div
+                      className="w-4 h-4 rounded-full bg-white/30"
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 1.2, repeat: Infinity }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Glowing dot and label */}
               <div className="absolute left-1/2 -translate-x-1/2 -top-1 flex flex-col items-center group/dot">
-                {/* Pulsing glow dot */}
                 <motion.div
                   className="w-3 h-3 rounded-full bg-white cursor-pointer"
                   style={{
@@ -183,7 +136,6 @@ function Floor1Content({ navigate, currentFloor }) {
                     ease: 'easeInOut',
                   }}
                 />
-                {/* Label */}
                 <motion.div
                   className="mt-2 px-2 py-0.5 bg-black/70 backdrop-blur-sm rounded text-[10px] text-white whitespace-nowrap opacity-0 group-hover/dot:opacity-100 transition-opacity duration-300 pointer-events-none"
                   style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400 }}
@@ -199,15 +151,17 @@ function Floor1Content({ navigate, currentFloor }) {
   )
 }
 
-// Ground Floor with background image and wall-mounted frames
-function GroundFloorContent({ navigate, currentFloor }) {
-  // Adjust these positions as needed for the right cream/yellow wall
+// Ground Floor with background image and wall-mounted frames (artworks 7-10)
+function GroundFloorContent({ navigate, currentFloor, generatedImages }) {
   const framePositions = [
-    { top: '12%', right: '35%', width: '220px', rotation: -1 },
-    { top: '50%', right: '35%', width: '225px', rotation: 0.5 },
-    { top: '12%', right: '12%', width: '218px', rotation: 1 },
-    { top: '50%', right: '12%', width: '223px', rotation: -0.5 },
+    { top: '12%', right: '35%', width: 220, rotation: -1 },
+    { top: '50%', right: '35%', width: 225, rotation: 0.5 },
+    { top: '12%', right: '12%', width: 218, rotation: 1 },
+    { top: '50%', right: '12%', width: 223, rotation: -0.5 },
   ]
+
+  // Use artworks 7-10 for the ground floor
+  const groundArtworks = artworks.slice(6, 10)
 
   return (
     <div className="w-full h-full relative overflow-hidden">
@@ -219,8 +173,10 @@ function GroundFloorContent({ navigate, currentFloor }) {
 
       {/* Frames on the right wall */}
       <div className="absolute inset-0">
-        {artworks.slice(0, framePositions.length).map((artwork, i) => {
+        {groundArtworks.map((artwork, i) => {
           const pos = framePositions[i]
+          const imageUrl = generatedImages[artwork.id]
+
           return (
             <div
               key={artwork.id}
@@ -228,21 +184,39 @@ function GroundFloorContent({ navigate, currentFloor }) {
               style={{
                 top: pos.top,
                 right: pos.right,
-                width: pos.width,
+                width: `${pos.width}px`,
                 transform: `rotate(${pos.rotation}deg)`,
               }}
               onClick={() => navigate(`/artwork/${artwork.id}?from=${currentFloor}`)}
             >
-              <img
-                src={artwork.image}
-                alt={artwork.placard.title}
-                className="w-full h-auto drop-shadow-[0_4px_16px_rgba(0,0,0,0.25)]"
-                draggable={false}
-              />
+              {/* Generated art image (square) */}
+              <div
+                className="drop-shadow-[0_4px_16px_rgba(0,0,0,0.25)]"
+                style={{ width: pos.width, height: pos.width }}
+              >
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={artwork.placard.title}
+                    className="w-full h-full object-cover"
+                    draggable={false}
+                  />
+                ) : (
+                  <div
+                    className="w-full h-full flex items-center justify-center"
+                    style={{ background: '#1a1a1a' }}
+                  >
+                    <motion.div
+                      className="w-4 h-4 rounded-full bg-white/30"
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 1.2, repeat: Infinity }}
+                    />
+                  </div>
+                )}
+              </div>
 
               {/* Glowing dot and label */}
               <div className="absolute left-1/2 -translate-x-1/2 -top-1 flex flex-col items-center group/dot">
-                {/* Pulsing glow dot */}
                 <motion.div
                   className="w-3 h-3 rounded-full bg-white cursor-pointer"
                   style={{
@@ -263,7 +237,6 @@ function GroundFloorContent({ navigate, currentFloor }) {
                     ease: 'easeInOut',
                   }}
                 />
-                {/* Label */}
                 <motion.div
                   className="mt-2 px-2 py-0.5 bg-black/70 backdrop-blur-sm rounded text-[10px] text-white whitespace-nowrap opacity-0 group-hover/dot:opacity-100 transition-opacity duration-300 pointer-events-none"
                   style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400 }}
@@ -284,6 +257,7 @@ export default function ExhibitionPage() {
   const location = useLocation()
   const containerRef = useRef(null)
   const [activeFloor, setActiveFloor] = useState('floor-1')
+  const { images: generatedImages, generating } = useGeneratedArt()
 
   // Track which floor is visible via scroll position
   const handleScroll = useCallback(() => {
@@ -341,9 +315,9 @@ export default function ExhibitionPage() {
         {FLOOR_IDS.map((id) => (
           <section key={id} id={id} className="snap-section bg-[#f5f0e8]">
             {id === 'floor-1' ? (
-              <Floor1Content navigate={navigate} currentFloor={id} />
+              <Floor1Content navigate={navigate} currentFloor={id} generatedImages={generatedImages} />
             ) : id === 'floor-0' ? (
-              <GroundFloorContent navigate={navigate} currentFloor={id} />
+              <GroundFloorContent navigate={navigate} currentFloor={id} generatedImages={generatedImages} />
             ) : (
               <FloorContent navigate={navigate} currentFloor={id} />
             )}

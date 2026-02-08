@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { artworks } from '@/lib/mockData'
+import { useGeneratedArt } from '@/lib/ArtContext'
 
 export default function ArtworkDetail() {
   const { id } = useParams()
@@ -9,6 +10,7 @@ export default function ArtworkDetail() {
   const [searchParams] = useSearchParams()
   const fromFloor = searchParams.get('from') || 'floor-0'
   const artwork = artworks.find((a) => a.id === Number(id))
+  const { images: generatedImages } = useGeneratedArt()
   const audioRef = useRef(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
@@ -121,7 +123,7 @@ export default function ArtworkDetail() {
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
         <img
-          src={artwork.image}
+          src={generatedImages[artwork.id] || artwork.image}
           alt={placard.title}
           className="max-h-[80vh] max-w-full object-contain drop-shadow-[0_8px_30px_rgba(0,0,0,0.15)]"
           draggable={false}
