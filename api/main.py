@@ -1,3 +1,4 @@
+import asyncio
 import os
 import re
 import math
@@ -11,16 +12,34 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel, Field
 
-load_dotenv(".env.local")
+_project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(_project_root, ".env.local"))
 load_dotenv()  # also load .env as fallback
 
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "").strip()
+print(f"[startup] ELEVENLABS_API_KEY={'SET' if ELEVENLABS_API_KEY else 'MISSING'}")
 DEFAULT_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "Xb7hH8MSUJpSbSDYk0k2").strip()
 DEFAULT_MODEL_ID = os.getenv("ELEVENLABS_MODEL_ID", "eleven_multilingual_v2").strip()
 DEFAULT_OUTPUT_FORMAT = os.getenv("ELEVENLABS_OUTPUT_FORMAT", "mp3_44100_128").strip()
 DEFAULT_STREAMING_LATENCY = os.getenv("ELEVENLABS_STREAMING_LATENCY", "2").strip()
 
-# Support multiple Gemini API keys for parallel generation
+# Vertex AI config
+GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID", "").strip()
+GCP_LOCATION = os.getenv("GCP_LOCATION", "us-central1").strip()
+_vertex_credentials = None
+_vertex_key_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "").strip()
+if _vertex_key_path and os.path.exists(_vertex_key_path):
+    from google.oauth2 import service_account
+    import google.auth.transport.requests as google_requests
+    _vertex_credentials = service_account.Credentials.from_service_account_file(
+        _vertex_key_path,
+        scopes=["https://www.googleapis.com/auth/cloud-platform"],
+    )
+    print(f"[startup] Vertex AI credentials loaded from {_vertex_key_path}")
+else:
+    print(f"[startup] Vertex AI credentials NOT found, falling back to Gemini API keys")
+
+# Fallback: Gemini API keys (free tier, rate limited)
 _gemini_keys = []
 for _k in [os.getenv("GEMINI_API_KEY", ""), os.getenv("GEMINI_API_KEY_2", "")]:
     _k = _k.strip()
@@ -413,41 +432,97 @@ CRITICAL: NO text, letters, numbers, symbols. NO faces or figures. Strictly abst
 The artwork fills 100% of the image. No borders. No margins. Edge to edge."""
 
 
-async def generate_image_with_imagen(prompt: str) -> Optional[str]:
-    global _gemini_key_index
-    if not _gemini_keys:
-        raise HTTPException(status_code=500, detail="Missing GEMINI_API_KEY")
+def _get_vertex_access_token() -> str:
+    """Get a fresh access token from service account credentials."""
+    import google.auth.transport.requests as google_requests
+    if not _vertex_credentials.valid or _vertex_credentials.expired:
+        _vertex_credentials.refresh(google_requests.Request())
+    return _vertex_credentials.token
 
-    # Round-robin across available keys
+
+_backend_counter = 0  # round-robin between backends
+
+
+async def _call_vertex(prompt: str) -> Optional[str]:
+    """Call Vertex AI with retry on 429."""
+    url = (
+        f"https://{GCP_LOCATION}-aiplatform.googleapis.com/v1/"
+        f"projects/{GCP_PROJECT_ID}/locations/{GCP_LOCATION}/"
+        f"publishers/google/models/imagen-3.0-generate-002:predict"
+    )
+    body = {"instances": [{"prompt": prompt}], "parameters": {"sampleCount": 1, "aspectRatio": "1:1"}}
+
+    for attempt in range(1, 4):
+        token = _get_vertex_access_token()
+        headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+        print(f"[generate] Vertex AI attempt {attempt}/3")
+        timeout = httpx.Timeout(90.0, connect=10.0)
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            response = await client.post(url, headers=headers, json=body)
+        if response.status_code == 429:
+            wait = attempt * 15
+            print(f"[generate] Vertex 429 — waiting {wait}s...")
+            await asyncio.sleep(wait)
+            continue
+        if response.status_code >= 400:
+            print(f"[generate] Vertex error {response.status_code}: {response.text[:300]}")
+            return None
+        predictions = response.json().get("predictions", [])
+        return predictions[0].get("bytesBase64Encoded") if predictions else None
+    return None
+
+
+async def _call_gemini(prompt: str) -> Optional[str]:
+    """Call free Gemini API with retry on 429."""
+    global _gemini_key_index
     key = _gemini_keys[_gemini_key_index % len(_gemini_keys)]
     _gemini_key_index += 1
-    key_label = f"key{(_gemini_key_index - 1) % len(_gemini_keys) + 1}/{len(_gemini_keys)}"
-    print(f"[generate] Using {key_label}")
-
     url = "https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict"
-    headers = {
-        "x-goog-api-key": key,
-        "Content-Type": "application/json",
-    }
-    body = {
-        "instances": [{"prompt": prompt}],
-        "parameters": {"sampleCount": 1, "aspectRatio": "1:1"},
-    }
+    body = {"instances": [{"prompt": prompt}], "parameters": {"sampleCount": 1, "aspectRatio": "1:1"}}
 
-    timeout = httpx.Timeout(60.0, connect=10.0)
-    async with httpx.AsyncClient(timeout=timeout) as client:
-        response = await client.post(url, headers=headers, json=body)
+    for attempt in range(1, 4):
+        headers = {"x-goog-api-key": key, "Content-Type": "application/json"}
+        print(f"[generate] Gemini API attempt {attempt}/3")
+        timeout = httpx.Timeout(90.0, connect=10.0)
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            response = await client.post(url, headers=headers, json=body)
+        if response.status_code == 429:
+            wait = attempt * 15
+            print(f"[generate] Gemini 429 — waiting {wait}s...")
+            await asyncio.sleep(wait)
+            continue
+        if response.status_code >= 400:
+            print(f"[generate] Gemini error {response.status_code}: {response.text[:200]}")
+            return None
+        predictions = response.json().get("predictions", [])
+        return predictions[0].get("bytesBase64Encoded") if predictions else None
+    return None
 
-    if response.status_code >= 400:
-        print(f"[generate] Imagen API error {response.status_code}: {response.text[:200]}")
-        return None
 
-    data = response.json()
-    predictions = data.get("predictions", [])
-    if not predictions:
-        return None
+async def generate_image_with_imagen(prompt: str) -> Optional[str]:
+    global _backend_counter
 
-    return predictions[0].get("bytesBase64Encoded")
+    has_vertex = bool(_vertex_credentials and GCP_PROJECT_ID)
+    has_gemini = bool(_gemini_keys)
+
+    if has_vertex and has_gemini:
+        # Alternate between backends to spread rate limit load
+        use_vertex = (_backend_counter % 2 == 0)
+        _backend_counter += 1
+        primary, fallback = (_call_vertex, _call_gemini) if use_vertex else (_call_gemini, _call_vertex)
+        tag = "Vertex" if use_vertex else "Gemini"
+        print(f"[generate] Round-robin → {tag} (request #{_backend_counter})")
+        result = await primary(prompt)
+        if result:
+            return result
+        print(f"[generate] {tag} failed, trying fallback...")
+        return await fallback(prompt)
+    elif has_vertex:
+        return await _call_vertex(prompt)
+    elif has_gemini:
+        return await _call_gemini(prompt)
+    else:
+        raise HTTPException(status_code=500, detail="No image generation credentials configured")
 
 
 class GenerateRequest(BaseModel):

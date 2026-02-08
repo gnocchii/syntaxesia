@@ -68,12 +68,11 @@ export function ArtProvider({ children }) {
     }
 
     async function generateAll() {
-      // Fire 2 at a time (one per API key) for ~2x speed
-      const batchSize = 2
-      for (let i = 0; i < total; i += batchSize) {
-        const batch = artworks.slice(i, Math.min(i + batchSize, total))
+      // Fire 2 at a time — server round-robins: one to Vertex AI, one to Gemini API
+      for (let i = 0; i < total; i += 2) {
+        const batch = artworks.slice(i, Math.min(i + 2, total))
         await Promise.all(batch.map((aw, j) => generateOne(aw, i + j)))
-        if (i + batchSize < total) await delay(1000)
+        if (i + 2 < total) await delay(10000)
       }
 
       setGenerating(false)
