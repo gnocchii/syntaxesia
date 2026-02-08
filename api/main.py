@@ -11,7 +11,8 @@ import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 # Add extraction directory to Python path
@@ -1067,3 +1068,35 @@ async def generate_placard(payload: PlacardRequest):
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Placard generation failed: {str(e)}")
+
+
+# ============================================
+# Static Files & SPA (at the end)
+# ============================================
+
+# Mount static files from 'dist' directory
+# This handles /assets/..., /favicon.ico, etc.
+if os.path.exists(os.path.join(_project_root, "dist")):
+    # Serve the main index page
+    @app.get("/")
+    async def serve_index():
+        return FileResponse(os.path.join(_project_root, "dist", "index.html"))
+
+    # Mount the rest of the static files (assets, etc.)
+    app.mount("/", StaticFiles(directory=os.path.join(_project_root, "dist")), name="static")
+
+    # Catch-all route for React Router (SPA)
+    # This must be AFTER all other routes
+    @app.exception_handler(404)
+    async def spa_exception_handler(request, exc):
+        # If it's an API call that 404'd, return a JSON error
+        if request.url.path.startswith("/api"):
+            return JSONResponse({"detail": "API route not found"}, status_code=404)
+        
+        # Otherwise, serve index.html for React Router to handle
+        index_path = os.path.join(_project_root, "dist", "index.html")
+        if os.path.exists(index_path):
+            return FileResponse(index_path)
+        return JSONResponse({"detail": "Not Found"}, status_code=404)
+else:
+    print(f"[startup] ⚠️  'dist' directory NOT found at {os.path.join(_project_root, 'dist')}. Frontend will not be served.")

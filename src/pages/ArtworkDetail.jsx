@@ -75,33 +75,46 @@ export default function ArtworkDetail() {
   }, [placard])
 
   const stopAudio = useCallback(() => {
-    if (!audioRef.current) return
-    audioRef.current.pause()
-    audioRef.current.currentTime = 0
-    audioRef.current.src = ''
-    audioRef.current.load()
+    const audio = audioRef.current
+    if (!audio) return
+    audio.pause()
+    audio.onended = null
+    audio.onerror = null
     audioRef.current = null
     setIsPlaying(false)
   }, [])
 
   const handleAudioToggle = useCallback(() => {
     if (!ttsText) return
-    if (isPlaying) {
+
+    // If already playing, just stop
+    if (audioRef.current) {
       stopAudio()
       return
     }
-    stopAudio()
+
     const params = new URLSearchParams({ text: ttsText })
     if (voiceId) {
       params.set('voice_id', voiceId)
     }
-    const audio = new Audio(`/api/tts?${params.toString()}`)
+    const ttsUrl = `/api/tts?${params.toString()}`
+    console.log('[TTS] Playing:', ttsUrl)
+
+    const audio = new Audio(ttsUrl)
+    audio.onended = () => { audioRef.current = null; setIsPlaying(false) }
+    audio.onerror = (e) => { console.error('[TTS] Error:', audio.error); audioRef.current = null; setIsPlaying(false) }
+    audio.oncanplaythrough = () => {
+      audio.play().then(() => {
+        console.log('[TTS] Playing audio')
+      }).catch((err) => {
+        console.error('[TTS] Play failed:', err)
+        audioRef.current = null
+        setIsPlaying(false)
+      })
+    }
     audioRef.current = audio
-    audio.onended = () => setIsPlaying(false)
-    audio.onerror = () => setIsPlaying(false)
     setIsPlaying(true)
-    audio.play().catch(() => setIsPlaying(false))
-  }, [isPlaying, stopAudio, ttsText, voiceId])
+  }, [ttsText, voiceId, stopAudio])
 
   useEffect(() => {
     return () => stopAudio()
