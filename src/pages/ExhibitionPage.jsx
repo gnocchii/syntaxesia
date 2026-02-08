@@ -306,18 +306,31 @@ export default function ExhibitionPage() {
     <div className="w-full h-full relative bg-[#f5f0e8]">
       <FloorIndicator activeFloor={activeFloor} onFloorClick={scrollToFloor} />
 
-      {/* Home button (favicon) */}
-      <button
-        onClick={() => navigate('/')}
-        className="fixed top-8 left-8 z-50 hover:opacity-80 transition-opacity duration-300"
-      >
-        <img
-          src="/favicon_syns.png"
-          alt="Home"
-          className="w-16 h-16 object-contain drop-shadow-lg"
-          draggable={false}
-        />
-      </button>
+      {/* Home button + Tip jar (top-left) */}
+      <div className="fixed top-8 left-8 z-50 flex items-center gap-3">
+        <button
+          onClick={() => navigate('/')}
+          className="hover:opacity-80 transition-opacity duration-300"
+        >
+          <img
+            src="/favicon_syns.png"
+            alt="Home"
+            className="w-16 h-16 object-contain drop-shadow-lg"
+            draggable={false}
+          />
+        </button>
+        <button
+          onClick={() => setTipOpen(true)}
+          className="hover:opacity-80 transition-opacity duration-300"
+        >
+          <img
+            src="/tipJar.png"
+            alt="Tip Jar"
+            className="w-20 h-20 object-contain drop-shadow-lg"
+            draggable={false}
+          />
+        </button>
+      </div>
 
       {/* Status overlay - hide on floor-2 */}
       {generating && status && activeFloor !== 'floor-2' && (
@@ -327,21 +340,6 @@ export default function ExhibitionPage() {
           </p>
         </div>
       )}
-
-      {/* Tip jar button */}
-      <button
-        onClick={() => setTipOpen(true)}
-        className="fixed bottom-8 right-8 z-50 w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
-      >
-        <StarBorder>
-          <img
-            src="/clearjar.png"
-            alt="Tip Jar"
-            className="w-10 h-10 object-contain"
-            draggable={false}
-          />
-        </StarBorder>
-      </button>
 
       {/* Tip Modal */}
       <TipModal isOpen={tipOpen} onClose={() => setTipOpen(false)} />

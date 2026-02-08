@@ -147,7 +147,7 @@ export default function TipModal({ isOpen, onClose }) {
 
           {/* Modal */}
           <motion.div
-            className="relative w-[90%] max-w-md bg-[#1a1a1a] rounded-2xl p-8 text-white shadow-2xl"
+            className="relative w-[90%] max-w-md bg-[#2a2a2e] rounded-2xl p-8 text-white shadow-2xl"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
@@ -211,7 +211,7 @@ export default function TipModal({ isOpen, onClose }) {
                         </p>
                         <button
                           onClick={() => setShowWalletPicker(true)}
-                          className="px-6 py-2.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium transition-colors"
+                          className="px-6 py-2.5 rounded-lg bg-purple-400/80 hover:bg-purple-400 text-white text-sm font-medium transition-colors"
                         >
                           Connect Wallet
                         </button>
@@ -258,7 +258,7 @@ export default function TipModal({ isOpen, onClose }) {
                           onClick={() => handlePresetClick(val)}
                           className={`flex-1 py-2.5 rounded-lg text-sm transition-all duration-200 ${
                             selectedPreset === val
-                              ? 'bg-purple-600 text-white shadow-[0_0_12px_rgba(147,51,234,0.3)]'
+                              ? 'bg-purple-600 text-white shadow-[0_0_12px_rgba(192,132,252,0.3)]'
                               : 'bg-white/10 text-white/70 hover:bg-white/15'
                           }`}
                         >
@@ -294,7 +294,7 @@ export default function TipModal({ isOpen, onClose }) {
                       disabled={effectiveAmount <= 0 || status === 'processing'}
                       className={`w-full py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                         effectiveAmount > 0 && status !== 'processing'
-                          ? 'bg-purple-600 hover:bg-purple-500 text-white cursor-pointer'
+                          ? 'bg-purple-400/80 hover:bg-purple-400 text-white cursor-pointer'
                           : 'bg-white/10 text-white/30 cursor-not-allowed'
                       }`}
                     >
@@ -320,7 +320,7 @@ export default function TipModal({ isOpen, onClose }) {
                   </div>
                   <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
                     <motion.div
-                      className="h-full bg-purple-500 rounded-full"
+                      className="h-full bg-purple-400 rounded-full"
                       initial={{ width: 0 }}
                       animate={{ width: `${progressPercent}%` }}
                       transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}
