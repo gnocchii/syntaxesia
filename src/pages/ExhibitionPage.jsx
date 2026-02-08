@@ -26,13 +26,6 @@ function Floor1Content({ navigate, currentFloor, artworks, generatedImages }) {
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: 'url(/L1.png)' }}
         />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <motion.div
-            className="w-8 h-8 rounded-full bg-white/50"
-            animate={{ opacity: [0.3, 1, 0.3] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          />
-        </div>
       </div>
     )
   }
@@ -142,13 +135,6 @@ function GroundFloorContent({ navigate, currentFloor, artworks, generatedImages 
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: 'url(/G.png)' }}
         />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <motion.div
-            className="w-8 h-8 rounded-full bg-white/50"
-            animate={{ opacity: [0.3, 1, 0.3] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          />
-        </div>
       </div>
     )
   }
@@ -271,8 +257,27 @@ export default function ExhibitionPage() {
     // Track scroll position for floor indicator
     el.addEventListener('scroll', handleScroll, { passive: true })
 
-    // Prevent manual scrolling via wheel/touch
+    // Prevent manual scrolling via wheel/touch, but allow scrolling inside Floor 2 gallery.
+    // When the gallery hits its scroll boundary, let the event through to transition floors.
     const preventScroll = (e) => {
+      const gallery = e.target.closest('.custom-scrollbar')
+      if (gallery) {
+        const { scrollTop, scrollHeight, clientHeight } = gallery
+        const atBottom = scrollTop + clientHeight >= scrollHeight - 2
+        const atTop = scrollTop <= 2
+        const scrollingDown = e.deltaY > 0 || (e.type === 'touchmove' && e.touches[0]?.clientY < (gallery._lastTouchY || 0))
+        const scrollingUp = e.deltaY < 0 || (e.type === 'touchmove' && e.touches[0]?.clientY > (gallery._lastTouchY || 0))
+        if (e.type === 'touchmove') gallery._lastTouchY = e.touches[0]?.clientY
+
+        // At boundary and scrolling further → let it transition floors
+        if ((atBottom && scrollingDown) || (atTop && scrollingUp)) {
+          scrollToFloor(scrollingDown ? 'floor-1' : 'floor-2')
+          e.preventDefault()
+          return
+        }
+        // Otherwise let gallery scroll normally
+        return
+      }
       e.preventDefault()
     }
     el.addEventListener('wheel', preventScroll, { passive: false })
@@ -302,7 +307,12 @@ export default function ExhibitionPage() {
   }
 
   return (
-    <div className="w-full h-full relative bg-[#f5f0e8]">
+    <motion.div
+      className="w-full h-full relative bg-[#f5f0e8]"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1.2, ease: 'easeOut' }}
+    >
       <FloorIndicator activeFloor={activeFloor} onFloorClick={scrollToFloor} />
 
       {/* Home button (favicon) */}
@@ -356,6 +366,6 @@ export default function ExhibitionPage() {
           </section>
         ))}
       </div>
-    </div>
+    </motion.div>
   )
 }

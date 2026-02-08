@@ -121,7 +121,7 @@ export default function Floor2Content() {
       </AnimatePresence>
 
       {/* Gallery Grid */}
-      <main className="flex-1 px-8 pb-12 overflow-y-auto custom-scrollbar relative z-10">
+      <main className="flex-1 min-h-0 px-8 pb-12 overflow-y-auto custom-scrollbar relative z-10">
         <div className="max-w-7xl mx-auto">
           {artworks.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -154,15 +154,15 @@ export default function Floor2Content() {
                         </span>
                       )}
                     </div>
-                    
+
                     <div className="h-px w-6 bg-charcoal/10 group-hover:w-12 transition-all duration-700" />
-                    
+
                     {artwork.medium && (
                       <p className="font-sans text-[10px] text-charcoal/50 leading-relaxed italic line-clamp-1">
                         {artwork.medium}
                       </p>
                     )}
-                    
+
                     {artwork.description && (
                       <p className="font-sans text-[10px] text-charcoal/40 leading-relaxed line-clamp-3 mt-3">
                         {artwork.description}

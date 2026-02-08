@@ -25,7 +25,8 @@ export default function TipModal({ isOpen, onClose }) {
   // Once a wallet is selected (via handleConnect), trigger the actual connection
   useEffect(() => {
     if (wallet && !connected) {
-      connect().catch(() => {})
+      console.log('[TipModal] Wallet selected, attempting connect:', wallet.adapter.name)
+      connect().catch((err) => console.error('[TipModal] Connect failed:', err))
     }
   }, [wallet, connected, connect])
 
@@ -65,21 +66,29 @@ export default function TipModal({ isOpen, onClose }) {
     { name: 'Solflare', installUrl: 'https://solflare.com/download' },
   ]
 
-  const handleWalletClick = useCallback((walletName, installUrl) => {
+  const handleWalletClick = useCallback(async (walletName, installUrl) => {
     // Find the wallet adapter by name (case-insensitive)
     const found = wallets.find(w =>
       w.adapter.name.toLowerCase() === walletName.toLowerCase() &&
       (w.readyState === 'Installed' || w.readyState === 'Loadable')
     )
 
+    console.log('[TipModal] Wallet click:', walletName, 'Found:', !!found, 'All wallets:', wallets.map(w => `${w.adapter.name}(${w.readyState})`))
+
     if (found) {
-      // Extension is installed — select it, useEffect will call connect()
-      select(found.adapter.name)
+      try {
+        select(found.adapter.name)
+        // Give select a moment to propagate, then connect directly
+        await new Promise(r => setTimeout(r, 200))
+        await connect()
+      } catch (err) {
+        console.error('[TipModal] Connect error:', err)
+      }
     } else {
       // Extension not installed — open download page in new tab
       window.open(installUrl, '_blank', 'noopener,noreferrer')
     }
-  }, [wallets, select])
+  }, [wallets, select, connect])
 
   // Check if a wallet extension is installed
   const isWalletInstalled = useCallback((walletName) => {

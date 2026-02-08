@@ -74,7 +74,7 @@ export default function ArtworkDetail() {
     return segments.join('. ')
   }, [placard])
 
-  const stopAudio = useCallback(() => {
+  const destroyAudio = useCallback(() => {
     const audio = audioRef.current
     if (!audio) return
     audio.pause()
@@ -84,12 +84,49 @@ export default function ArtworkDetail() {
     setIsPlaying(false)
   }, [])
 
+  const handleVoiceChange = useCallback((newVoiceId) => {
+    const wasPlaying = isPlaying
+    const currentTime = audioRef.current?.currentTime || 0
+
+    // Destroy current audio
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.onended = null
+      audioRef.current.onerror = null
+      audioRef.current = null
+      setIsPlaying(false)
+    }
+
+    setVoiceId(newVoiceId)
+
+    // If was playing, restart with new voice and seek to same position
+    if (wasPlaying && ttsText) {
+      const params = new URLSearchParams({ text: ttsText })
+      params.set('voice_id', newVoiceId)
+      const audio = new Audio(`/api/tts?${params.toString()}`)
+      audio.onended = () => { audioRef.current = null; setIsPlaying(false) }
+      audio.onerror = () => { audioRef.current = null; setIsPlaying(false) }
+      audio.oncanplaythrough = () => {
+        if (currentTime > 0) audio.currentTime = currentTime
+        audio.play().catch(() => { audioRef.current = null; setIsPlaying(false) })
+      }
+      audioRef.current = audio
+      setIsPlaying(true)
+    }
+  }, [isPlaying, ttsText])
+
   const handleAudioToggle = useCallback(() => {
     if (!ttsText) return
 
-    // If already playing, just stop
+    // If audio exists, toggle pause/resume
     if (audioRef.current) {
-      stopAudio()
+      if (isPlaying) {
+        audioRef.current.pause()
+        setIsPlaying(false)
+      } else {
+        audioRef.current.play().catch(() => {})
+        setIsPlaying(true)
+      }
       return
     }
 
@@ -114,11 +151,11 @@ export default function ArtworkDetail() {
     }
     audioRef.current = audio
     setIsPlaying(true)
-  }, [ttsText, voiceId, stopAudio])
+  }, [ttsText, voiceId, isPlaying])
 
   useEffect(() => {
-    return () => stopAudio()
-  }, [stopAudio])
+    return () => destroyAudio()
+  }, [destroyAudio])
 
   return (
     <div className="w-full h-full bg-white flex">
@@ -154,7 +191,7 @@ export default function ArtworkDetail() {
       >
         {/* Back button */}
         <button
-          onClick={() => navigate('/exhibition', { state: { scrollToFloor: fromFloor } })}
+          onClick={() => { destroyAudio(); navigate('/exhibition', { state: { scrollToFloor: fromFloor } }) }}
           className="text-sm text-[#1a1a1a]/50 hover:text-[#1a1a1a]/80 transition-colors uppercase tracking-wide mb-8 self-start"
           style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300 }}
         >
@@ -237,7 +274,7 @@ export default function ArtworkDetail() {
                     name="voice"
                     value={voice.id}
                     checked={voiceId === voice.id}
-                    onChange={() => setVoiceId(voice.id)}
+                    onChange={() => handleVoiceChange(voice.id)}
                     className="mt-0.5 accent-[#1a1a1a]"
                   />
                   <span>

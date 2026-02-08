@@ -11,8 +11,7 @@ import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel, Field
 
 # Add extraction directory to Python path
@@ -577,8 +576,8 @@ def get_texture_overlays(m: dict) -> str:
 
 
 def generate_gallery_prompt(m: dict) -> str:
-    return f"""A close-up, frame-filling photograph of a post-modern art piece.
-The artwork fills 100% of the image edge to edge. No gallery walls, no floor, no frame.
+    return f"""A post-modern abstract artwork covering the entire image edge to edge. 8K hyper-detailed.
+The artwork extends beyond all four edges — as if cropped from a larger piece. Every pixel is art.
 
 {get_art_medium(m)}
 
@@ -589,11 +588,11 @@ COLOR PALETTE:
 
 DENSITY: {get_density_directive(m["lines_of_code"])}
 
-CRITICAL: The artwork covers the ENTIRE image edge to edge.
+CRITICAL: The artwork covers the ENTIRE image edge to edge. Art bleeds past every edge.
 Visible materiality — thickness, texture, weight of materials.
 NO text, letters, numbers, symbols. NO recognizable faces or figures.
-Strictly abstract. Square format.
-FRAMING: Edge to edge coverage only."""
+NO borders, NO surrounding space, NO walls, NO floor, NO mat.
+Strictly abstract. Square format. 100% surface coverage."""
 
 
 def generate_dalle_prompt(m: dict) -> str:
@@ -619,7 +618,7 @@ def generate_dalle_prompt(m: dict) -> str:
     else:
         marks = "CAMP IRONY: Over-painted decoration, obsessive painted patterns, maximalist surface"
 
-    return f"""A museum-quality 2D PAINTING on canvas worth MILLIONS at auction. 8K hyper-detailed.
+    return f"""A 2D PAINTING on canvas. 8K hyper-detailed. The painting covers the entire image edge to edge.
 Style: {movement}
 
 {get_density_directive(m["lines_of_code"])}
@@ -638,10 +637,11 @@ MARK-MAKING: {marks}
 SURFACE: Painted marks only - NO objects. Colors suggest depth through layering and texture.
 Thick paint application, matte/glossy contrasts, visible brushwork evidence.
 Gothic-Baroque-Pop fusion - ornate painted patterns meets flat color fields.
-This took months of painting. Museum-quality 2D craftsmanship.
+This took months of painting. Masterful 2D craftsmanship.
 
 CRITICAL: 100% ABSTRACT 2D PAINTING on canvas. NO objects, text, numbers, faces, depth.
-Pure painted abstract marks. Flat surface covered edge-to-edge with dense painted detail."""
+Pure painted abstract marks. Flat surface covered edge-to-edge with dense painted detail.
+NO borders, NO surrounding space, NO walls, NO floor, NO mat. Art bleeds past every edge."""
 
 
 def _get_vertex_access_token() -> str:
@@ -884,12 +884,13 @@ Your task: Write a museum placard that describes this artwork. The placard shoul
      * Data-heavy / Structured / Grid Systems (tabular logic, weaving, grids)
 
 2. **Artist Match:**
-   - Match ONE artist from this curated list:
-     * Yayoi Kusama (infinite dots, mirrored recursion, repetition-as-obsession)
-     * Zaha Hadid (parametric architecture, fluid geometry, precision + futurism)
-     * Jenny Holzer (language-as-art, proclamation, text as visual medium)
-     * Tracey Emin (raw vulnerability, confessional, imperfect expression)
-     * Anni Albers (code-as-weaving, grids, structural textiles)
+   - Match ONE artist from this curated list based on the aesthetic category above:
+     * Yayoi Kusama — best for: Recursive / Pattern-heavy (infinite dots, mirrored recursion, repetition-as-obsession)
+     * Zaha Hadid — best for: Clean / Structured / Modular (parametric architecture, fluid geometry, precision + futurism)
+     * Jenny Holzer — best for: Minimal / Comment-driven (language-as-art, proclamation, text as visual medium)
+     * Tracey Emin — best for: Messy / Experimental / Hacky (raw vulnerability, confessional, imperfect expression)
+     * Anni Albers — best for: Data-heavy / Structured / Grid Systems (woven grids, structural textiles, interlocking patterns)
+   - Choose the artist whose "best for" category matches the aesthetic classification you chose above. Each category maps to exactly one artist.
    - Use phrasing like: "Inspired by the aesthetic language of..." or "Evoking the structural qualities of..."
    - Do NOT say "in the style of"
 
@@ -1068,35 +1069,3 @@ async def generate_placard(payload: PlacardRequest):
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Placard generation failed: {str(e)}")
-
-
-# ============================================
-# Static Files & SPA (at the end)
-# ============================================
-
-# Mount static files from 'dist' directory
-# This handles /assets/..., /favicon.ico, etc.
-if os.path.exists(os.path.join(_project_root, "dist")):
-    # Serve the main index page
-    @app.get("/")
-    async def serve_index():
-        return FileResponse(os.path.join(_project_root, "dist", "index.html"))
-
-    # Mount the rest of the static files (assets, etc.)
-    app.mount("/", StaticFiles(directory=os.path.join(_project_root, "dist")), name="static")
-
-    # Catch-all route for React Router (SPA)
-    # This must be AFTER all other routes
-    @app.exception_handler(404)
-    async def spa_exception_handler(request, exc):
-        # If it's an API call that 404'd, return a JSON error
-        if request.url.path.startswith("/api"):
-            return JSONResponse({"detail": "API route not found"}, status_code=404)
-        
-        # Otherwise, serve index.html for React Router to handle
-        index_path = os.path.join(_project_root, "dist", "index.html")
-        if os.path.exists(index_path):
-            return FileResponse(index_path)
-        return JSONResponse({"detail": "Not Found"}, status_code=404)
-else:
-    print(f"[startup] ⚠️  'dist' directory NOT found at {os.path.join(_project_root, 'dist')}. Frontend will not be served.")
