@@ -1,13 +1,25 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { artworks } from '@/lib/mockData'
 import { useGeneratedArt } from '@/lib/ArtContext'
 import FloorIndicator from '@/components/FloorIndicator'
 
 const FLOOR_IDS = ['floor-2', 'floor-1', 'floor-0']
 
-function FloorContent({ navigate, currentFloor }) {
+function FloorContent({ navigate, currentFloor, artworks, generatedImages }) {
+  if (!artworks || artworks.length === 0) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center">
+        <motion.div
+          className="w-8 h-8 rounded-full bg-[#1a1a1a]/30"
+          animate={{ opacity: [0.3, 1, 0.3] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        />
+        <p className="mt-4 text-sm text-[#1a1a1a]/40">Loading gallery...</p>
+      </div>
+    )
+  }
+
   return (
     <div className="w-full h-full flex flex-col">
       <header className="shrink-0 text-center pt-8 pb-4">
@@ -24,27 +36,40 @@ function FloorContent({ navigate, currentFloor }) {
 
       <main className="flex-1 flex items-center justify-center px-12">
         <div className="grid grid-cols-3 gap-10 max-w-5xl">
-          {artworks.map((artwork, i) => (
-            <motion.div
-              key={artwork.id}
-              className="cursor-pointer"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.6, ease: 'easeOut' }}
-              whileHover={{ scale: 1.05, y: -4 }}
-              onClick={() => navigate(`/artwork/${artwork.id}?from=${currentFloor}`)}
-            >
-              <img
-                src={artwork.image}
-                alt={artwork.placard.title}
-                className="w-full h-auto drop-shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition-[filter] duration-300 hover:drop-shadow-[0_12px_32px_rgba(0,0,0,0.3)]"
-                draggable={false}
-              />
-              <p className="text-center mt-3 text-sm italic text-[#1a1a1a]/40">
-                {artwork.placard.title}
-              </p>
-            </motion.div>
-          ))}
+          {artworks.map((artwork, i) => {
+            const imageUrl = generatedImages[artwork.id]
+            return (
+              <motion.div
+                key={artwork.id}
+                className="cursor-pointer"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1, duration: 0.6, ease: 'easeOut' }}
+                whileHover={{ scale: 1.05, y: -4 }}
+                onClick={() => navigate(`/artwork/${artwork.id}?from=${currentFloor}`)}
+              >
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={artwork.placard.title}
+                    className="w-full h-auto drop-shadow-[0_8px_24px_rgba(0,0,0,0.2)] transition-[filter] duration-300 hover:drop-shadow-[0_12px_32px_rgba(0,0,0,0.3)]"
+                    draggable={false}
+                  />
+                ) : (
+                  <div className="w-full aspect-square bg-[#1a1a1a]/5 flex items-center justify-center">
+                    <motion.div
+                      className="w-4 h-4 rounded-full bg-[#1a1a1a]/30"
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 1.2, repeat: Infinity }}
+                    />
+                  </div>
+                )}
+                <p className="text-center mt-3 text-sm italic text-[#1a1a1a]/40">
+                  {artwork.placard.title}
+                </p>
+              </motion.div>
+            )
+          })}
         </div>
       </main>
     </div>
@@ -52,7 +77,7 @@ function FloorContent({ navigate, currentFloor }) {
 }
 
 // Floor 1 (Level 1) with background image and wall-mounted frames
-function Floor1Content({ navigate, currentFloor, generatedImages }) {
+function Floor1Content({ navigate, currentFloor, artworks, generatedImages }) {
   const framePositions = [
     { top: '17%', right: '40%', width: 133, rotation: -1 },
     { top: '35%', right: '40%', width: 135, rotation: 0.5 },
@@ -61,6 +86,24 @@ function Floor1Content({ navigate, currentFloor, generatedImages }) {
     { top: '17%', right: '10%', width: 133, rotation: 0.5 },
     { top: '35%', right: '10%', width: 135, rotation: -1 },
   ]
+
+  if (!artworks || artworks.length === 0) {
+    return (
+      <div className="w-full h-full relative overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: 'url(/L1.png)' }}
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <motion.div
+            className="w-8 h-8 rounded-full bg-white/50"
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="w-full h-full relative overflow-hidden">
@@ -72,7 +115,7 @@ function Floor1Content({ navigate, currentFloor, generatedImages }) {
 
       {/* Frames on the right wall */}
       <div className="absolute inset-0">
-        {artworks.slice(0, framePositions.length).map((artwork, i) => {
+        {artworks.slice(0, Math.min(framePositions.length, artworks.length)).map((artwork, i) => {
           const pos = framePositions[i]
           const imageUrl = generatedImages[artwork.id]
 
@@ -152,7 +195,7 @@ function Floor1Content({ navigate, currentFloor, generatedImages }) {
 }
 
 // Ground Floor with background image and wall-mounted frames (artworks 7-10)
-function GroundFloorContent({ navigate, currentFloor, generatedImages }) {
+function GroundFloorContent({ navigate, currentFloor, artworks, generatedImages }) {
   const framePositions = [
     { top: '12%', right: '35%', width: 220, rotation: -1 },
     { top: '50%', right: '35%', width: 225, rotation: 0.5 },
@@ -160,7 +203,25 @@ function GroundFloorContent({ navigate, currentFloor, generatedImages }) {
     { top: '50%', right: '12%', width: 223, rotation: -0.5 },
   ]
 
-  // Use artworks 7-10 for the ground floor
+  if (!artworks || artworks.length === 0) {
+    return (
+      <div className="w-full h-full relative overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: 'url(/G.png)' }}
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <motion.div
+            className="w-8 h-8 rounded-full bg-white/50"
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  // Use artworks 7-10 for the ground floor (if available)
   const groundArtworks = artworks.slice(6, 10)
 
   return (
@@ -257,7 +318,7 @@ export default function ExhibitionPage() {
   const location = useLocation()
   const containerRef = useRef(null)
   const [activeFloor, setActiveFloor] = useState('floor-1')
-  const { images: generatedImages, generating } = useGeneratedArt()
+  const { artworks, images: generatedImages, generating, status } = useGeneratedArt()
 
   // Track which floor is visible via scroll position
   const handleScroll = useCallback(() => {
@@ -311,15 +372,24 @@ export default function ExhibitionPage() {
     <div className="w-full h-full relative bg-[#f5f0e8]">
       <FloorIndicator activeFloor={activeFloor} onFloorClick={scrollToFloor} />
 
+      {/* Status overlay */}
+      {generating && status && (
+        <div className="absolute top-8 left-1/2 -translate-x-1/2 z-50 px-6 py-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg">
+          <p className="text-sm text-[#1a1a1a]/70" style={{ fontFamily: 'Inter, sans-serif' }}>
+            {status}
+          </p>
+        </div>
+      )}
+
       <div ref={containerRef} className="snap-container-no-scroll">
         {FLOOR_IDS.map((id) => (
           <section key={id} id={id} className="snap-section bg-[#f5f0e8]">
             {id === 'floor-1' ? (
-              <Floor1Content navigate={navigate} currentFloor={id} generatedImages={generatedImages} />
+              <Floor1Content navigate={navigate} currentFloor={id} artworks={artworks} generatedImages={generatedImages} />
             ) : id === 'floor-0' ? (
-              <GroundFloorContent navigate={navigate} currentFloor={id} generatedImages={generatedImages} />
+              <GroundFloorContent navigate={navigate} currentFloor={id} artworks={artworks} generatedImages={generatedImages} />
             ) : (
-              <FloorContent navigate={navigate} currentFloor={id} />
+              <FloorContent navigate={navigate} currentFloor={id} artworks={artworks} generatedImages={generatedImages} />
             )}
           </section>
         ))}

@@ -1,9 +1,11 @@
 import asyncio
+import json
 import os
 import re
 import math
 import random
-from typing import AsyncIterator, Optional
+import sys
+from typing import AsyncIterator, Optional, Dict, Any, List
 
 import httpx
 from dotenv import load_dotenv
@@ -11,6 +13,10 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel, Field
+
+# Add extraction directory to Python path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+from extraction.github_extractor import GitHubExtractor
 
 _project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv(os.path.join(_project_root, ".env.local"))
@@ -23,25 +29,80 @@ DEFAULT_MODEL_ID = os.getenv("ELEVENLABS_MODEL_ID", "eleven_multilingual_v2").st
 DEFAULT_OUTPUT_FORMAT = os.getenv("ELEVENLABS_OUTPUT_FORMAT", "mp3_44100_128").strip()
 DEFAULT_STREAMING_LATENCY = os.getenv("ELEVENLABS_STREAMING_LATENCY", "2").strip()
 
-# Vertex AI config
+# Anthropic API key (for placard generation with Claude)
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "").strip()
+print(f"[startup] ANTHROPIC_API_KEY={'SET' if ANTHROPIC_API_KEY else 'MISSING'}")
+
+# Vertex AI config - Instance 1
 GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID", "").strip()
 GCP_LOCATION = os.getenv("GCP_LOCATION", "us-central1").strip()
 _vertex_credentials = None
-_vertex_key_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "").strip()
-if _vertex_key_path and os.path.exists(_vertex_key_path):
-    from google.oauth2 import service_account
-    import google.auth.transport.requests as google_requests
-    _vertex_credentials = service_account.Credentials.from_service_account_file(
-        _vertex_key_path,
-        scopes=["https://www.googleapis.com/auth/cloud-platform"],
-    )
-    print(f"[startup] Vertex AI credentials loaded from {_vertex_key_path}")
+
+# Try loading credentials from JSON string (for Vercel/production)
+_vertex_creds_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON", "").strip()
+if _vertex_creds_json:
+    try:
+        import json
+        from google.oauth2 import service_account
+        import google.auth.transport.requests as google_requests
+        _creds_dict = json.loads(_vertex_creds_json)
+        _vertex_credentials = service_account.Credentials.from_service_account_info(
+            _creds_dict,
+            scopes=["https://www.googleapis.com/auth/cloud-platform"],
+        )
+        print(f"[startup] Vertex AI #1 credentials loaded from GOOGLE_APPLICATION_CREDENTIALS_JSON env var")
+    except Exception as e:
+        print(f"[startup] Failed to load Vertex AI #1 credentials from JSON: {e}")
+# Fallback to file path (for local development)
+elif _vertex_key_path := os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "").strip():
+    if os.path.exists(_vertex_key_path):
+        from google.oauth2 import service_account
+        import google.auth.transport.requests as google_requests
+        _vertex_credentials = service_account.Credentials.from_service_account_file(
+            _vertex_key_path,
+            scopes=["https://www.googleapis.com/auth/cloud-platform"],
+        )
+        print(f"[startup] Vertex AI #1 credentials loaded from {_vertex_key_path}")
+
+# Vertex AI config - Instance 2 (for parallel processing)
+GCP_PROJECT_ID_2 = os.getenv("GCP_PROJECT_ID_2", "").strip()
+GCP_LOCATION_2 = os.getenv("GCP_LOCATION_2", "us-central1").strip()
+_vertex_credentials_2 = None
+
+# Try loading credentials from JSON string (for Vercel/production)
+_vertex_creds_json_2 = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON_2", "").strip()
+if _vertex_creds_json_2:
+    try:
+        from google.oauth2 import service_account
+        _creds_dict_2 = json.loads(_vertex_creds_json_2)
+        _vertex_credentials_2 = service_account.Credentials.from_service_account_info(
+            _creds_dict_2,
+            scopes=["https://www.googleapis.com/auth/cloud-platform"],
+        )
+        print(f"[startup] Vertex AI #2 credentials loaded from GOOGLE_APPLICATION_CREDENTIALS_JSON_2 env var")
+    except Exception as e:
+        print(f"[startup] Failed to load Vertex AI #2 credentials from JSON: {e}")
+# Fallback to file path (for local development)
+elif _vertex_key_path_2 := os.getenv("GOOGLE_APPLICATION_CREDENTIALS_2", "").strip():
+    if os.path.exists(_vertex_key_path_2):
+        from google.oauth2 import service_account
+        _vertex_credentials_2 = service_account.Credentials.from_service_account_file(
+            _vertex_key_path_2,
+            scopes=["https://www.googleapis.com/auth/cloud-platform"],
+        )
+        print(f"[startup] Vertex AI #2 credentials loaded from {_vertex_key_path_2}")
+
+# Status check
+if _vertex_credentials and _vertex_credentials_2:
+    print(f"[startup] ✅ DUAL Vertex AI instances configured (2x speed)")
+elif _vertex_credentials:
+    print(f"[startup] ✅ Single Vertex AI instance configured")
 else:
-    print(f"[startup] Vertex AI credentials NOT found, falling back to Gemini API keys")
+    print(f"[startup] ⚠️  Vertex AI credentials NOT found, falling back to Gemini API keys")
 
 # Fallback: Gemini API keys (free tier, rate limited)
 _gemini_keys = []
-for _k in [os.getenv("GEMINI_API_KEY", ""), os.getenv("GEMINI_API_KEY_2", "")]:
+for _k in [os.getenv("GEMINI_API_KEY", ""), os.getenv("GEMINI_API_KEY_2", ""), os.getenv("GEMINI_API_KEY_3", "")]:
     _k = _k.strip()
     if _k:
         _gemini_keys.append(_k)
@@ -433,18 +494,26 @@ The artwork fills 100% of the image. No borders. No margins. Edge to edge."""
 
 
 def _get_vertex_access_token() -> str:
-    """Get a fresh access token from service account credentials."""
+    """Get a fresh access token from service account credentials (Vertex AI #1)."""
     import google.auth.transport.requests as google_requests
     if not _vertex_credentials.valid or _vertex_credentials.expired:
         _vertex_credentials.refresh(google_requests.Request())
     return _vertex_credentials.token
 
 
+def _get_vertex_access_token_2() -> str:
+    """Get a fresh access token from service account credentials (Vertex AI #2)."""
+    import google.auth.transport.requests as google_requests
+    if not _vertex_credentials_2.valid or _vertex_credentials_2.expired:
+        _vertex_credentials_2.refresh(google_requests.Request())
+    return _vertex_credentials_2.token
+
+
 _backend_counter = 0  # round-robin between backends
 
 
 async def _call_vertex(prompt: str) -> Optional[str]:
-    """Call Vertex AI with retry on 429."""
+    """Call Vertex AI #1 with retry on 429."""
     url = (
         f"https://{GCP_LOCATION}-aiplatform.googleapis.com/v1/"
         f"projects/{GCP_PROJECT_ID}/locations/{GCP_LOCATION}/"
@@ -455,17 +524,46 @@ async def _call_vertex(prompt: str) -> Optional[str]:
     for attempt in range(1, 4):
         token = _get_vertex_access_token()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-        print(f"[generate] Vertex AI attempt {attempt}/3")
+        print(f"[generate] Vertex AI #1 attempt {attempt}/3")
         timeout = httpx.Timeout(90.0, connect=10.0)
         async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.post(url, headers=headers, json=body)
         if response.status_code == 429:
             wait = attempt * 15
-            print(f"[generate] Vertex 429 — waiting {wait}s...")
+            print(f"[generate] Vertex #1 429 — waiting {wait}s...")
             await asyncio.sleep(wait)
             continue
         if response.status_code >= 400:
-            print(f"[generate] Vertex error {response.status_code}: {response.text[:300]}")
+            print(f"[generate] Vertex #1 error {response.status_code}: {response.text[:300]}")
+            return None
+        predictions = response.json().get("predictions", [])
+        return predictions[0].get("bytesBase64Encoded") if predictions else None
+    return None
+
+
+async def _call_vertex_2(prompt: str) -> Optional[str]:
+    """Call Vertex AI #2 with retry on 429."""
+    url = (
+        f"https://{GCP_LOCATION_2}-aiplatform.googleapis.com/v1/"
+        f"projects/{GCP_PROJECT_ID_2}/locations/{GCP_LOCATION_2}/"
+        f"publishers/google/models/imagen-3.0-generate-002:predict"
+    )
+    body = {"instances": [{"prompt": prompt}], "parameters": {"sampleCount": 1, "aspectRatio": "1:1"}}
+
+    for attempt in range(1, 4):
+        token = _get_vertex_access_token_2()
+        headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+        print(f"[generate] Vertex AI #2 attempt {attempt}/3")
+        timeout = httpx.Timeout(90.0, connect=10.0)
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            response = await client.post(url, headers=headers, json=body)
+        if response.status_code == 429:
+            wait = attempt * 15
+            print(f"[generate] Vertex #2 429 — waiting {wait}s...")
+            await asyncio.sleep(wait)
+            continue
+        if response.status_code >= 400:
+            print(f"[generate] Vertex #2 error {response.status_code}: {response.text[:300]}")
             return None
         predictions = response.json().get("predictions", [])
         return predictions[0].get("bytesBase64Encoded") if predictions else None
@@ -501,47 +599,80 @@ async def _call_gemini(prompt: str) -> Optional[str]:
 
 async def generate_image_with_imagen(prompt: str) -> Optional[str]:
     global _backend_counter
-
     has_vertex = bool(_vertex_credentials and GCP_PROJECT_ID)
+    has_vertex_2 = bool(_vertex_credentials_2 and GCP_PROJECT_ID_2)
     has_gemini = bool(_gemini_keys)
 
-    if has_vertex and has_gemini:
-        # Alternate between backends to spread rate limit load
-        use_vertex = (_backend_counter % 2 == 0)
+    # DUAL Vertex AI: Round-robin between two instances for 2x speed
+    if has_vertex and has_vertex_2:
+        use_vertex_2 = (_backend_counter % 2 == 1)
         _backend_counter += 1
-        primary, fallback = (_call_vertex, _call_gemini) if use_vertex else (_call_gemini, _call_vertex)
-        tag = "Vertex" if use_vertex else "Gemini"
-        print(f"[generate] Round-robin → {tag} (request #{_backend_counter})")
-        result = await primary(prompt)
+        instance = "#2" if use_vertex_2 else "#1"
+        print(f"[generate] DUAL Vertex AI → Instance {instance} (request #{_backend_counter})")
+
+        result = await (_call_vertex_2(prompt) if use_vertex_2 else _call_vertex(prompt))
         if result:
             return result
-        print(f"[generate] {tag} failed, trying fallback...")
-        return await fallback(prompt)
+        # Fallback to the other Vertex instance
+        print(f"[generate] Vertex {instance} failed, trying other instance")
+        fallback = await (_call_vertex(prompt) if use_vertex_2 else _call_vertex_2(prompt))
+        if fallback:
+            return fallback
+        # Last resort: Gemini
+        if has_gemini:
+            print(f"[generate] Both Vertex instances failed, falling back to Gemini API")
+            return await _call_gemini(prompt)
+        return None
+
+    # Single Vertex AI instance
     elif has_vertex:
-        return await _call_vertex(prompt)
+        print(f"[generate] Using Vertex AI Imagen 3 (single instance)")
+        result = await _call_vertex(prompt)
+        if result:
+            return result
+        if has_gemini:
+            print(f"[generate] Vertex failed, falling back to Gemini API")
+            return await _call_gemini(prompt)
+        return None
+
+    # Gemini API only
     elif has_gemini:
+        print(f"[generate] Using Gemini API (Vertex not configured)")
         return await _call_gemini(prompt)
+
     else:
         raise HTTPException(status_code=500, detail="No image generation credentials configured")
 
 
 class GenerateRequest(BaseModel):
-    code: str = Field(..., min_length=1)
+    code: Optional[str] = None
     language: Optional[str] = None
+    prompt: Optional[str] = None  # Direct Imagen prompt (from placard generation)
 
 
 @app.post("/api/generate")
 async def generate_art(payload: GenerateRequest):
-    code = payload.code[:1800]
-    language = payload.language or detect_language(code)
+    # If prompt is provided directly, use it (new flow from placard generation)
+    if payload.prompt:
+        prompt = payload.prompt
+        metrics = {}
+        print(f"[generate] Using provided prompt ({len(prompt)} chars), calling Imagen...")
 
-    print(f"[generate] Analyzing code ({len(code)} chars, language={language})")
+    # Otherwise, generate prompt from code (legacy flow)
+    elif payload.code:
+        code = payload.code[:1800]
+        language = payload.language or detect_language(code)
 
-    signals = analyze_code(code)
-    metrics = compute_metrics(code, language, signals)
+        print(f"[generate] Analyzing code ({len(code)} chars, language={language})")
 
-    prompt = random.choice([generate_dalle_prompt, generate_gallery_prompt])(metrics)
-    print(f"[generate] Prompt generated ({len(prompt)} chars), calling Imagen 4...")
+        signals = analyze_code(code)
+        metrics = compute_metrics(code, language, signals)
+
+        prompt = random.choice([generate_dalle_prompt, generate_gallery_prompt])(metrics)
+        print(f"[generate] Prompt generated ({len(prompt)} chars), calling Imagen...")
+
+    else:
+        raise HTTPException(status_code=400, detail="Either 'code' or 'prompt' must be provided")
 
     b64 = await generate_image_with_imagen(prompt)
 
@@ -557,3 +688,232 @@ async def generate_art(payload: GenerateRequest):
         "prompt_used": prompt,
         "metrics": metrics,
     }
+
+
+# ============================================
+# Placard Generation with Claude Haiku
+# ============================================
+
+async def call_claude_for_placard(
+    imagen_prompt: str,
+    code_snippet: str,
+    file_path: str,
+    language: str,
+    repo_name: str,
+    username: str
+) -> Dict[str, Any]:
+    """Call Claude Haiku to generate placard description based on the generated artwork"""
+
+    if not ANTHROPIC_API_KEY:
+        raise HTTPException(status_code=500, detail="Anthropic API key not configured")
+
+    # Build the prompt for Claude
+    claude_prompt = f"""You are a sophisticated museum curator writing a placard for "Syntaxesia" - an art exhibition where code is transformed into abstract post-modern artworks.
+
+An artwork has been generated from this code file using the following Imagen prompt:
+"{imagen_prompt}"
+
+Code File Information:
+- File: {file_path}
+- Language: {language}
+- Repository: {repo_name}
+- Author: @{username}
+
+Code Sample (first 500 chars):
+{code_snippet[:500]}
+
+Your task: Write a museum placard that describes this artwork. The placard should:
+
+1. **Aesthetic Classification:**
+   - Choose ONE dominant aesthetic category:
+     * Recursive / Pattern-heavy (obsessive repetition, recursion, nested loops)
+     * Clean / Structured / Modular (clean boundaries, composable modules)
+     * Minimal / Comment-driven (text as primary medium, sparse structure)
+     * Messy / Experimental / Hacky (raw, improvisational, broken conventions)
+     * Data-heavy / Structured / Grid Systems (tabular logic, weaving, grids)
+
+2. **Artist Match:**
+   - Match ONE artist from this curated list:
+     * Yayoi Kusama (infinite dots, mirrored recursion, repetition-as-obsession)
+     * Zaha Hadid (parametric architecture, fluid geometry, precision + futurism)
+     * Jenny Holzer (language-as-art, proclamation, text as visual medium)
+     * Tracey Emin (raw vulnerability, confessional, imperfect expression)
+     * Anni Albers (code-as-weaving, grids, structural textiles)
+   - Use phrasing like: "Inspired by the aesthetic language of..." or "Evoking the structural qualities of..."
+   - Do NOT say "in the style of"
+
+3. **Placard Description:**
+   - 2-4 sentences in sophisticated museum docent voice
+   - Reference the artwork's visual elements (based on the Imagen prompt) AND code characteristics
+   - Use art criticism language with clever observations about code quality
+   - Subtly humorous tone
+   - Must be two paragraphs separated by a blank line:
+     * Paragraph 1: artwork description + code observations
+     * Paragraph 2: artist context (1-2 sentences), referencing the matched artist
+
+Return ONLY valid JSON in this format:
+{{
+  "aestheticCategory": "one of the categories above",
+  "artistMatch": "one artist name from the list",
+  "artistDescription": "1 sentence describing the artist's work (general, factual, non-hyperbolic)",
+  "placardDescription": "your placard description here (two paragraphs separated by blank line)"
+}}"""
+
+    url = "https://api.anthropic.com/v1/messages"
+    headers = {
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+        "Content-Type": "application/json"
+    }
+    body = {
+        "model": "claude-3-5-haiku-20241022",
+        "max_tokens": 1024,
+        "temperature": 0.7,
+        "messages": [{
+            "role": "user",
+            "content": claude_prompt
+        }]
+    }
+
+    for attempt in range(1, 4):
+        timeout = httpx.Timeout(30.0, connect=10.0)
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            response = await client.post(url, headers=headers, json=body)
+
+        if response.status_code == 429:
+            wait = attempt * 10
+            print(f"[placard] Claude 429 — waiting {wait}s...")
+            await asyncio.sleep(wait)
+            continue
+
+        if response.status_code >= 400:
+            error_text = response.text[:500]
+            print(f"[placard] Claude error {response.status_code}: {error_text}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Claude API error {response.status_code}: {error_text}"
+            )
+
+        data = response.json()
+        text = data.get("content", [{}])[0].get("text", "")
+
+        # Parse JSON from response (handle markdown code blocks)
+        text = text.strip()
+        text = re.sub(r"^```json\s*", "", text)
+        text = re.sub(r"^```\s*", "", text)
+        text = re.sub(r"```\s*$", "", text)
+        text = text.strip()
+
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError as e:
+            print(f"[placard] Failed to parse JSON: {e}")
+            print(f"[placard] Raw text: {text[:500]}")
+            raise HTTPException(status_code=500, detail="Failed to parse Claude response as JSON")
+
+    raise HTTPException(status_code=500, detail="Claude API retry limit exceeded")
+
+
+# ============================================
+# GitHub Extraction
+# ============================================
+
+class ExtractRequest(BaseModel):
+    github_url: str = Field(..., min_length=1)
+
+
+@app.post("/api/extract")
+async def extract_github_repo(payload: ExtractRequest):
+    """
+    Extract code files and metadata from a GitHub repository.
+    Returns top 15 files with their content snippets and importance scores.
+    """
+    try:
+        github_url = payload.github_url.strip()
+
+        # Validate URL format
+        if not github_url.startswith('https://github.com/'):
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid GitHub URL format. Must start with 'https://github.com/'"
+            )
+
+        print(f"[extract] Extracting from {github_url}")
+
+        # Create extractor (no token for now, will use public API)
+        github_token = os.getenv("GITHUB_TOKEN", "").strip() or None
+        extractor = GitHubExtractor(github_token=github_token)
+
+        # Extract repository data
+        repo_data = extractor.extract(github_url)
+
+        print(f"[extract] Extracted {len(repo_data.get('analysis', {}).get('important_files', {}))} files")
+
+        return {
+            "success": True,
+            "data": repo_data
+        }
+
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        print(f"[extract] Error: {e}")
+        raise HTTPException(status_code=500, detail=f"Extraction failed: {str(e)}")
+
+
+class PlacardRequest(BaseModel):
+    imagen_prompt: str = Field(..., min_length=1)
+    code_snippet: str = Field(..., min_length=1)
+    file_path: str
+    language: str
+    repo_name: str
+    username: str
+    year: Optional[str] = None
+
+
+@app.post("/api/placard")
+async def generate_placard(payload: PlacardRequest):
+    """
+    Generate a museum placard description for a generated artwork.
+    Takes the Imagen prompt used to create the artwork + code context.
+    Returns placard data using Claude Haiku.
+    """
+    try:
+        print(f"[placard] Generating placard for {payload.file_path}")
+
+        # Call Claude to generate placard
+        claude_response = await call_claude_for_placard(
+            imagen_prompt=payload.imagen_prompt,
+            code_snippet=payload.code_snippet,
+            file_path=payload.file_path,
+            language=payload.language,
+            repo_name=payload.repo_name,
+            username=payload.username
+        )
+
+        # Build complete placard object
+        filename = os.path.basename(payload.file_path)
+
+        placard = {
+            "title": filename,
+            "filename": filename,
+            "filePath": payload.file_path,
+            "artist": f"Code by @{payload.username}",
+            "medium": f"{payload.language}, {payload.year or '2024'}",
+            "year": payload.year or "",
+            "repoName": payload.repo_name,
+            "description": claude_response.get("placardDescription", ""),
+            "aestheticCategory": claude_response.get("aestheticCategory", ""),
+            "artistMatch": claude_response.get("artistMatch", ""),
+            "artistDescription": claude_response.get("artistDescription", "")
+        }
+
+        print(f"[placard] Generated placard for {payload.file_path}")
+
+        return placard
+
+    except Exception as e:
+        print(f"[placard] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Placard generation failed: {str(e)}")

@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useGeneratedArt } from '@/lib/ArtContext'
 
 export default function LandingPage() {
-  const [code, setCode] = useState('')
+  const [githubUrl, setGithubUrlLocal] = useState('')
   const [status, setStatus] = useState('')
   const navigate = useNavigate()
+  const { setGithubUrl } = useGeneratedArt()
 
   return (
     <main
@@ -88,41 +90,46 @@ export default function LandingPage() {
             SYNTAXESIA
           </h1>
           <p className="mx-auto max-w-xl text-sm text-[#1a1a1a]/65 sm:text-base">
-            Paste your code and we&apos;ll turn it into a gallery of abstract art.
+            Enter a GitHub repository URL and we&apos;ll turn its code into a gallery of abstract art.
           </p>
         </header>
 
         <section className="flex w-full flex-col gap-3">
           <label
-            htmlFor="code-input"
+            htmlFor="github-url-input"
             className="text-xs uppercase tracking-[0.3em] text-[#1a1a1a]/60"
             style={{ fontFamily: 'Inter, sans-serif' }}
           >
-            Your Code
+            GitHub Repository URL
           </label>
-          <textarea
-            id="code-input"
-            placeholder="Paste code here..."
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            className="mx-auto h-[32vh] w-full max-w-[750px] border border-[#1a1a1a]/20 bg-white/90 p-5 text-sm text-[#1a1a1a] shadow-[0_16px_40px_rgba(28,28,28,0.08)] outline-none transition focus:border-[#1a1a1a]/50"
+          <input
+            id="github-url-input"
+            type="url"
+            placeholder="https://github.com/owner/repository"
+            value={githubUrl}
+            onChange={(e) => setGithubUrlLocal(e.target.value)}
+            className="mx-auto w-full max-w-[750px] border border-[#1a1a1a]/20 bg-white/90 px-6 py-4 text-sm text-[#1a1a1a] shadow-[0_16px_40px_rgba(28,28,28,0.08)] outline-none transition focus:border-[#1a1a1a]/50"
             style={{
               borderRadius: '28px',
-              padding: '1.25rem',
-              maxHeight: '420px',
-              minHeight: '180px',
-              fontFamily: 'JetBrains Mono, monospace',
-              fontSize: '13px',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '14px',
             }}
           />
           <button
             className="mx-auto inline-flex items-center justify-center rounded-full bg-[#1a1a1a] px-6 py-3 text-sm font-medium text-[#faf6ee] transition hover:-translate-y-0.5 hover:shadow-[0_18px_45px_rgba(28,28,28,0.25)]"
             style={{ fontFamily: 'Inter, sans-serif' }}
             onClick={() => {
-              if (!code.trim()) {
-                setStatus('Paste some code first.')
+              const trimmed = githubUrl.trim()
+              if (!trimmed) {
+                setStatus('Please enter a GitHub URL.')
                 return
               }
+              if (!trimmed.startsWith('https://github.com/')) {
+                setStatus('Please enter a valid GitHub URL (https://github.com/owner/repo).')
+                return
+              }
+              // Trigger extraction and placard generation in ArtContext
+              setGithubUrl(trimmed)
               navigate('/exhibition')
             }}
           >

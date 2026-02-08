@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { artworks } from '@/lib/mockData'
 import { useGeneratedArt } from '@/lib/ArtContext'
 
 export default function ArtworkDetail() {
@@ -9,8 +8,8 @@ export default function ArtworkDetail() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const fromFloor = searchParams.get('from') || 'floor-0'
+  const { artworks, images: generatedImages } = useGeneratedArt()
   const artwork = artworks.find((a) => a.id === Number(id))
-  const { images: generatedImages } = useGeneratedArt()
   const audioRef = useRef(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
@@ -122,12 +121,22 @@ export default function ArtworkDetail() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
-        <img
-          src={generatedImages[artwork.id] || artwork.image}
-          alt={placard.title}
-          className="max-h-[80vh] max-w-full object-contain drop-shadow-[0_8px_30px_rgba(0,0,0,0.15)]"
-          draggable={false}
-        />
+        {generatedImages[artwork.id] ? (
+          <img
+            src={generatedImages[artwork.id]}
+            alt={placard.title}
+            className="max-h-[80vh] max-w-full object-contain drop-shadow-[0_8px_30px_rgba(0,0,0,0.15)]"
+            draggable={false}
+          />
+        ) : (
+          <div className="flex items-center justify-center w-96 h-96">
+            <motion.div
+              className="w-8 h-8 rounded-full bg-[#1a1a1a]/30"
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            />
+          </div>
+        )}
       </motion.div>
 
       {/* Right — Placard */}
@@ -165,7 +174,12 @@ export default function ArtworkDetail() {
 
         {/* Year */}
         {placard.year && (
-          <p className="text-sm text-[#1a1a1a]/40 mb-8">{placard.year}</p>
+          <p className="text-sm text-[#1a1a1a]/40 mb-1">{placard.year}</p>
+        )}
+
+        {/* Repository Name */}
+        {placard.repoName && (
+          <p className="text-sm text-[#1a1a1a]/40 mb-8">{placard.repoName}</p>
         )}
 
         {/* Divider */}
