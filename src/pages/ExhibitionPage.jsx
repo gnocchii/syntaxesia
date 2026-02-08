@@ -50,17 +50,56 @@ function FloorContent({ navigate, currentFloor }) {
   )
 }
 
+// Renders a code snippet as a square art piece
+function CodeArt({ code, language, size = 133 }) {
+  // Scale font size based on code length and frame size
+  const lines = code.split('\n')
+  const fontSize = Math.max(2, Math.min(5, size / (lines.length * 2.2)))
+
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        background: '#0d1117',
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: size * 0.06,
+      }}
+    >
+      <pre
+        style={{
+          fontFamily: 'JetBrains Mono, monospace',
+          fontSize: `${fontSize}px`,
+          lineHeight: 1.4,
+          color: language === 'python' ? '#a5d6ff' : '#7ee787',
+          whiteSpace: 'pre',
+          overflow: 'hidden',
+          width: '100%',
+          height: '100%',
+          margin: 0,
+          opacity: 0.9,
+        }}
+      >
+        {code}
+      </pre>
+    </div>
+  )
+}
+
 // Floor 1 (Level 1) with background image and wall-mounted frames
 function Floor1Content({ navigate, currentFloor }) {
   // Adjust these positions as needed
   // Safe area: right 0-59.4%, top 2.9-52.8% (avoids left gray/pink area)
   const framePositions = [
-    { top: '17%', right: '40%', width: '133px', rotation: -1 },
-    { top: '35%', right: '40%', width: '135px', rotation: 0.5 },
-    { top: '17%', right: '25%', width: '132px', rotation: 1 },
-    { top: '35%', right: '25%', width: '134px', rotation: -0.5 },
-    { top: '17%', right: '10%', width: '133px', rotation: 0.5 },
-    { top: '35%', right: '10%', width: '135px', rotation: -1 },
+    { top: '17%', right: '40%', width: 133, rotation: -1 },
+    { top: '35%', right: '40%', width: 135, rotation: 0.5 },
+    { top: '17%', right: '25%', width: 132, rotation: 1 },
+    { top: '35%', right: '25%', width: 134, rotation: -0.5 },
+    { top: '17%', right: '10%', width: 133, rotation: 0.5 },
+    { top: '35%', right: '10%', width: 135, rotation: -1 },
   ]
 
   return (
@@ -75,6 +114,12 @@ function Floor1Content({ navigate, currentFloor }) {
       <div className="absolute inset-0">
         {artworks.slice(0, framePositions.length).map((artwork, i) => {
           const pos = framePositions[i]
+          // frame.png is 665x545, so aspect ratio ~1.22:1
+          const frameWidth = pos.width
+          const frameHeight = frameWidth / (665 / 545)
+          // Inset for the art inside the frame border
+          const inset = frameWidth * 0.08
+
           return (
             <div
               key={artwork.id}
@@ -82,17 +127,38 @@ function Floor1Content({ navigate, currentFloor }) {
               style={{
                 top: pos.top,
                 right: pos.right,
-                width: pos.width,
+                width: `${frameWidth}px`,
                 transform: `rotate(${pos.rotation}deg)`,
               }}
               onClick={() => navigate(`/artwork/${artwork.id}?from=${currentFloor}`)}
             >
-              <img
-                src={artwork.image}
-                alt={artwork.placard.title}
-                className="w-full h-auto drop-shadow-[0_4px_16px_rgba(0,0,0,0.25)]"
-                draggable={false}
-              />
+              {/* Container for frame + art */}
+              <div className="relative" style={{ width: frameWidth, height: frameHeight }}>
+                {/* Code art behind the frame */}
+                <div
+                  className="absolute overflow-hidden"
+                  style={{
+                    top: inset,
+                    left: inset,
+                    right: inset,
+                    bottom: inset,
+                  }}
+                >
+                  <CodeArt
+                    code={artwork.code}
+                    language={artwork.language}
+                    size={frameWidth - inset * 2}
+                  />
+                </div>
+                {/* Transparent frame overlay */}
+                <img
+                  src={artwork.image}
+                  alt={artwork.placard.title}
+                  className="absolute inset-0 w-full h-full drop-shadow-[0_4px_16px_rgba(0,0,0,0.25)]"
+                  draggable={false}
+                  style={{ pointerEvents: 'none' }}
+                />
+              </div>
 
               {/* Glowing dot and label */}
               <div className="absolute left-1/2 -translate-x-1/2 -top-1 flex flex-col items-center group/dot">
@@ -217,7 +283,7 @@ export default function ExhibitionPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const containerRef = useRef(null)
-  const [activeFloor, setActiveFloor] = useState('floor-0')
+  const [activeFloor, setActiveFloor] = useState('floor-1')
 
   // Track which floor is visible via scroll position
   const handleScroll = useCallback(() => {
@@ -253,7 +319,7 @@ export default function ExhibitionPage() {
 
   // Scroll to appropriate floor on mount
   useEffect(() => {
-    const scrollToFloorId = location.state?.scrollToFloor || 'floor-0'
+    const scrollToFloorId = location.state?.scrollToFloor || 'floor-1'
     const targetFloor = document.getElementById(scrollToFloorId)
     if (targetFloor) {
       targetFloor.scrollIntoView({ behavior: 'instant' })

@@ -4,6 +4,20 @@ export const artworks = [
   {
     id: 1,
     image: '/frame.png',
+    code: `const data = await fetch(url);
+const json = await data.json();
+const user = await getUser(json.id);
+const prefs = await loadPreferences(user);
+Promise.all([
+  fetchAvatar(user),
+  fetchHistory(user),
+  fetchNotifications(user),
+]).then(([avatar, history, notifs]) => {
+  render(avatar, history, notifs);
+});
+const stream = await openStream();
+await stream.pipe(transform).pipe(output);`,
+    language: 'javascript',
     placard: {
       title: 'The Lecture Hall',
       filename: 'lecture_hall.js',
@@ -21,6 +35,20 @@ export const artworks = [
   {
     id: 2,
     image: '/frame.png',
+    code: `const data = await fetch(url);
+const json = await data.json();
+const user = await getUser(json.id);
+const prefs = await loadPreferences(user);
+Promise.all([
+  fetchAvatar(user),
+  fetchHistory(user),
+  fetchNotifications(user),
+]).then(([avatar, history, notifs]) => {
+  render(avatar, history, notifs);
+});
+const stream = await openStream();
+await stream.pipe(transform).pipe(output);`,
+    language: 'javascript',
     placard: {
       title: 'Assembly of Gazes',
       filename: 'assembly_of_gazes.py',
@@ -37,9 +65,19 @@ export const artworks = [
   {
     id: 3,
     image: '/frame.png',
+    code: `square = lambda x: x * x
+
+double = lambda x: x * 2
+
+add = lambda a, b: a + b
+
+pipe = lambda *fns: lambda x: reduce(lambda v, f: f(v), fns, x)
+
+transform = pipe(double, square, str)`,
+    language: 'python',
     placard: {
       title: 'The Weight of Attention',
-      filename: 'weight_of_attention.tsx',
+      filename: 'weight_of_attention.py',
       artist: 'Unknown Folk Artist',
       medium: 'Carved & painted wood diorama',
       year: '1935',
@@ -53,9 +91,39 @@ export const artworks = [
   {
     id: 4,
     image: '/frame.png',
+    code: `def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+def flatten(lst):
+    result = []
+    for item in lst:
+        if isinstance(item, list):
+            result.extend(flatten(item))
+        else:
+            result.append(item)
+    return result
+
+def power(base, exp):
+    if exp == 0:
+        return 1
+    if exp % 2 == 0:
+        half = power(base, exp // 2)
+        return half * half
+    return base * power(base, exp - 1)
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return merge(left, right)`,
+    language: 'python',
     placard: {
       title: 'Furniture as Architecture',
-      filename: 'furniture_architecture.rb',
+      filename: 'furniture_architecture.py',
       artist: 'Unknown Folk Artist',
       medium: 'Carved & painted wood diorama',
       year: '1933',
@@ -69,9 +137,23 @@ export const artworks = [
   {
     id: 5,
     image: '/frame.png',
+    code: `compose = lambda f, g: lambda x: f(g(x))
+
+identity = lambda x: x
+
+const = lambda x: lambda _: x
+
+flip = lambda f: lambda a: lambda b: f(b)(a)
+
+fmap = lambda f: lambda xs: list(map(f, xs))
+
+filter_by = lambda p: lambda xs: list(filter(p, xs))
+
+fold = lambda f, acc: lambda xs: reduce(f, xs, acc)`,
+    language: 'python',
     placard: {
       title: 'Study in Ochre',
-      filename: 'study_in_ochre.go',
+      filename: 'study_in_ochre.py',
       artist: 'Unknown Folk Artist',
       medium: 'Carved & painted wood diorama',
       year: '1936',
@@ -85,9 +167,48 @@ export const artworks = [
   {
     id: 6,
     image: '/frame.png',
+    code: `import { useRef, useEffect, useState } from 'react';
+import * as THREE from 'three';
+import { SimplexNoise } from 'three/examples/jsm/math/SimplexNoise.js';
+
+const CommentatorOrb = ({ analyser, onSoundActiveChange }) => {
+  const mountRef = useRef(null);
+  const groupRef = useRef(null);
+  const [hasStarted, setHasStarted] = useState(false);
+
+  useEffect(() => {
+    if (!mountRef.current) return;
+    if (!analyser) return;
+
+    const currentMount = mountRef.current;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      45, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000
+    );
+    camera.position.set(0, 0, 100);
+    camera.lookAt(scene.position);
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+    currentMount.appendChild(renderer.domElement);
+
+    const group = new THREE.Group();
+    groupRef.current = group;
+    group.scale.set(0.8, 0.8, 0.8);
+    scene.add(group);
+
+    const geometry = new THREE.TorusKnotGeometry(8, 1.2, 256, 20);
+    // ...
+  }, [analyser, onSoundActiveChange]);
+
+  return <div ref={mountRef} style={{ width: '100%', height: '100%' }} />;
+};
+
+export default CommentatorOrb;`,
+    language: 'javascript',
     placard: {
       title: 'The Democratic Stage',
-      filename: 'democratic_stage.java',
+      filename: 'democratic_stage.jsx',
       artist: 'Unknown Folk Artist',
       medium: 'Carved & painted wood diorama',
       year: '1937',

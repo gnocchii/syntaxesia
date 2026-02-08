@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --sx-bg: 245 242 236;      /* warm museum paper */
+  --sx-ink: 28 28 28;        /* near-black */
+  --sx-gold: 171 141 87;     /* muted frame gold */
+}
+
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background: rgb(var(--sx-bg));
+    color: rgb(var(--sx-ink));
+  }
+}
+
+/* subtle film grain overlay */
+.sx-grain { position: relative; }
+
+.sx-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.10;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+/* museum-placard border */
+.sx-placard {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(171, 141, 87, 0.35);
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(12px);
+}

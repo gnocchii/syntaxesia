@@ -13,7 +13,22 @@ dist/
 # OS files
 .DS_Store
 *.log
+*.pem
 
 # IDE
 .vscode/
 .idea/
+
+# secrets / credentials
+syntaxesia-vertex-key.json
+*-key.json
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# vercel
+.vercel
+
+# Python
+__pycache__/

@@ -137,7 +137,7 @@ export default function ArtworkDetail() {
       >
         {/* Back button */}
         <button
-          onClick={() => navigate('/', { state: { scrollToFloor: fromFloor } })}
+          onClick={() => navigate('/exhibition', { state: { scrollToFloor: fromFloor } })}
           className="text-sm text-gray-400 hover:text-gray-600 transition-colors mb-10 self-start"
           style={{ fontFamily: 'Inter, sans-serif' }}
         >
