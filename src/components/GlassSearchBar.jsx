@@ -96,7 +96,7 @@ const GlassSearchBar = ({ onSubmit }) => {
             />
             {!inputValue && (
               <div className="placeholder">
-                <DecryptedText text="paste your git repo link..." animateOn="view" sequential={true} speed={50} />
+                <DecryptedText text="paste your repo here..." animateOn="view" sequential={true} speed={50} />
               </div>
             )}
             {inputValue && (

@@ -85,13 +85,13 @@ export default function LandingPage() {
               </FuzzyText>
             </div>
             <DecryptedText
-              text="breathe life into your codebase"
+              text="breathe exhibition into your codebase"
               animateOn="view"
               revealDirection="center"
               speed={100}
               maxIterations={40}
               characters="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+"
-              parentClassName="inline-block text-white/70 font-['Geist_Mono',monospace] text-[clamp(0.7rem,1.2vw,1rem)] tracking-[0.2em]"
+              parentClassName="inline-block text-white/70 font-['Geist_Mono',monospace] text-[clamp(0.7rem,1.2vw,1rem)]"
             />
           </motion.div>
           
