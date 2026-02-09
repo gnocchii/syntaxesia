@@ -11,7 +11,8 @@ import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 # Add extraction directory to Python path
@@ -1069,3 +1070,29 @@ async def generate_placard(payload: PlacardRequest):
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Placard generation failed: {str(e)}")
+
+
+# ============================================
+# Serve Vite frontend (production)
+# ============================================
+
+_dist_dir = os.path.join(_project_root, "dist")
+_assets_dir = os.path.join(_dist_dir, "assets")
+if os.path.isdir(_dist_dir):
+    # Serve hashed assets (JS, CSS bundles) via StaticFiles for efficiency
+    if os.path.isdir(_assets_dir):
+        app.mount("/assets", StaticFiles(directory=_assets_dir), name="assets")
+
+    # Catch-all: serve static files or index.html for SPA routing
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        # Try to serve the exact file first (images, fonts, favicon, etc.)
+        file_path = os.path.join(_dist_dir, full_path)
+        if full_path and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        # Fallback to index.html for React Router client-side routing
+        return FileResponse(os.path.join(_dist_dir, "index.html"))
+
+    print(f"[startup] Serving frontend from {_dist_dir}")
+else:
+    print(f"[startup] No dist/ directory found — frontend not served")
