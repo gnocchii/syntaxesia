@@ -110,14 +110,14 @@ export default function LandingPage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
           >
-            Read our{' '}
+            read the{' '}
             <a
               href="https://github.com/gnocchii/syntaxesia"
               target="_blank"
               rel="noopener noreferrer"
               className="underline underline-offset-2 text-white/70 hover:text-white transition-colors"
             >
-              GitHub
+              github
             </a>
             {' '}or{' '}
             <a
@@ -126,7 +126,7 @@ export default function LandingPage() {
               rel="noopener noreferrer"
               className="underline underline-offset-2 text-white/70 hover:text-white transition-colors"
             >
-              Devpost
+              devpost
             </a>
           </motion.p>
         </div>
