@@ -85,13 +85,13 @@ export default function LandingPage() {
               </FuzzyText>
             </div>
             <DecryptedText
-              text="breathe life into your codespace"
+              text="breathe life into your codebase"
               animateOn="view"
               revealDirection="center"
               speed={100}
               maxIterations={40}
               characters="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+"
-              parentClassName="inline-block text-white/70 font-sans text-[clamp(0.7rem,1.2vw,1rem)] tracking-[0.2em]"
+              parentClassName="inline-block text-white/70 font-['Geist_Mono',monospace] text-[clamp(0.7rem,1.2vw,1rem)] tracking-[0.2em]"
             />
           </motion.div>
           
@@ -103,6 +103,32 @@ export default function LandingPage() {
           >
             <GlassSearchBar onSubmit={handleSearch} />
           </motion.div>
+
+          <motion.p
+            className="text-white/50 text-[clamp(0.55rem,0.9vw,0.8rem)] tracking-wide mt-3 font-['Geist_Mono',monospace]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
+          >
+            Read our{' '}
+            <a
+              href="https://github.com/gnocchii/syntaxesia"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 text-white/70 hover:text-white transition-colors"
+            >
+              GitHub
+            </a>
+            {' '}or{' '}
+            <a
+              href="https://devpost.com/software/syntaxesia?ref_content=user-portfolio&ref_feature=in_progress"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 text-white/70 hover:text-white transition-colors"
+            >
+              Devpost
+            </a>
+          </motion.p>
         </div>
       </div>
 
