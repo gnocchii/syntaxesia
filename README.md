@@ -27,7 +27,7 @@ paste a repo and syntaxesia parses and analyzes structural code signals in your 
 
 ## acknowledgements
 
-<img src="public/acknowledgments.png" alt="innovateher" width="600">
+<img src="public/acknowledgments.png" alt="innovateher" width="700">
 
 built with ♡ at innovateher 2026 (1st place winner of art / culture track)
 
