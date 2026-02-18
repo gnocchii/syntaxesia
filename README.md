@@ -3,7 +3,7 @@
 watch syntaxesia transform your codespace into an immersive art exhibition in real time. you can also play with an art search engine featuring exclusively female artists. click the gif below for a full demo!
 | dubs | intro |
 | :---: | :---: |
-| <img src="public/dubs.png" alt="winner" width="250"> | <a href="[https://youtu.be/vu5Rtqyy23I](https://youtu.be/vu5Rtqyy23I)"><img src="public/final demo.gif" alt="syntaxesia demo" width="560"></a> |
+| <img src="public/dubs.png" alt="winner" width="250"> | <a href="https://youtu.be/vu5Rtqyy23I"><img src="public/final demo.gif" alt="syntaxesia demo" width="560"></a> |
 
 <div align="center">
   <br><br>
