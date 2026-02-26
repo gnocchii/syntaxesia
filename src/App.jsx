@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom'
-import { SolflareWalletAdapter } from '@solana/wallet-adapter-solflare'
 import { clusterApiUrl } from '@solana/web3.js'
 import { useMemo } from 'react'
 import '@solana/wallet-adapter-react-ui/styles.css'
@@ -12,8 +11,8 @@ import ExhibitionPage from './pages/ExhibitionPage'
 import ArtworkDetail from './pages/ArtworkDetail'
 
 function App() {
-  const endpoint = useMemo(() => clusterApiUrl('mainnet-beta'), [])
-  const wallets = useMemo(() => [new PhantomWalletAdapter(), new SolflareWalletAdapter()], [])
+  const endpoint = useMemo(() => `https://mainnet.helius-rpc.com/?api-key=${import.meta.env.VITE_HELIUS_API_KEY}`, [])
+  const wallets = useMemo(() => [new PhantomWalletAdapter()], [])
 
   return (
     <ConnectionProvider endpoint={endpoint}>

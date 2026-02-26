@@ -11,7 +11,7 @@ import {
 // Your Solana wallet address (parsed lazily to avoid crashing on load)
 const TREASURY_ADDRESS = 'CtkVDjqHTc6hqzXtsNjFjMHeMT1KruG836M6GC291WEf'
 
-const PRESET_AMOUNTS = [0.01, 0.05, 0.1]
+const PRESET_AMOUNTS = [0.05, 0.1, 0.5]
 
 // Hardcoded donation stats — replace with live data later
 const TOTAL_DONATIONS = 12
@@ -63,7 +63,6 @@ export default function TipModal({ isOpen, onClose }) {
 
   const WALLET_OPTIONS = [
     { name: 'Phantom', installUrl: 'https://phantom.app/download' },
-    { name: 'Solflare', installUrl: 'https://solflare.com/download' },
   ]
 
   const handleWalletClick = useCallback(async (walletName, installUrl) => {
