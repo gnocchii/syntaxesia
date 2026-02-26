@@ -12,7 +12,7 @@ import ExhibitionPage from './pages/ExhibitionPage'
 import ArtworkDetail from './pages/ArtworkDetail'
 
 function App() {
-  const endpoint = useMemo(() => clusterApiUrl('devnet'), [])
+  const endpoint = useMemo(() => clusterApiUrl('mainnet-beta'), [])
   const wallets = useMemo(() => [new PhantomWalletAdapter(), new SolflareWalletAdapter()], [])
 
   return (
